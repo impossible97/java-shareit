@@ -1,4 +1,4 @@
-package ru.practicum.shareit.user;
+package ru.practicum.shareit.user.model;
 
 import lombok.AccessLevel;
 import lombok.Data;
@@ -17,8 +17,7 @@ public class User {
     @NotNull
     @NotBlank
     String name;
-    @Email(message = "Неправильный адрес электронной почты")
     @NotEmpty(message = "Поле email не может быть пустым")
-    @NotNull
+    @Email(message = "Неправильный адрес электронной почты")
     private String email;
 }

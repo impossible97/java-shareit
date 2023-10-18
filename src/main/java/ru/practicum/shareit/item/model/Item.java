@@ -3,25 +3,15 @@ package ru.practicum.shareit.item.model;
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.experimental.FieldDefaults;
-import ru.practicum.shareit.user.User;
-
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
+import ru.practicum.shareit.user.model.User;
 
 @Data
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class Item {
 
     long id;
-    @NotBlank
-    @NotNull
-    String title;
-    @Size(max = 200, message = "Максимальная длинна описания 200 символов")
-    @NotNull
+    String name;
     String description;
-    @NotNull
-    boolean available;
-    @NotNull
+    Boolean available;
     User owner;
 }
