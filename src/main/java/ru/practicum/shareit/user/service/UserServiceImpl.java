@@ -12,6 +12,7 @@ import java.util.List;
 public class UserServiceImpl implements UserService {
 
     private final UserStorage userStorage;
+
     @Override
     public User getUser(long userId) {
         return userStorage.getUser(userId);

@@ -69,6 +69,5 @@ public class InMemoryUserStorage implements UserStorage {
         } else {
             throw new NotFoundException("Пользователь с таким id = " + userId + " не найден!");
         }
-
     }
 }
