@@ -1,14 +1,9 @@
 package ru.practicum.shareit.user.dao;
 
 import org.springframework.stereotype.Component;
-import ru.practicum.shareit.exception.ConflictException;
-import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.user.model.User;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Component
 public class InMemoryUserStorage implements UserStorage {
@@ -18,11 +13,7 @@ public class InMemoryUserStorage implements UserStorage {
 
     @Override
     public User getUser(long userId) {
-        User user = users.get(userId);
-        if (user == null) {
-            throw new NotFoundException("Пользователь с таким id = " + userId + " не найден!");
-        }
-        return user;
+        return users.get(userId);
     }
 
     @Override
@@ -32,10 +23,6 @@ public class InMemoryUserStorage implements UserStorage {
 
     @Override
     public User createUser(User user) {
-        boolean b = new ArrayList<>(users.values()).stream().anyMatch(user1 -> user1.getEmail().equals(user.getEmail()));
-        if (b) {
-            throw new ConflictException("Пользователь с таким email = " + user.getEmail() + " уже существует!");
-        }
         user.setId(++generatedId);
         users.put(user.getId(), user);
         return user;
@@ -43,14 +30,6 @@ public class InMemoryUserStorage implements UserStorage {
 
     @Override
     public User updateUser(long userId, User updatedUser) {
-        if (!users.containsKey(userId)) {
-            throw new NotFoundException("Пользователь с таким id = " + userId + " не найден!");
-        }
-        boolean b = new ArrayList<>(users.values()).stream().anyMatch(user1 -> userId != user1.getId() &
-                user1.getEmail().equals(updatedUser.getEmail()));
-        if (b) {
-            throw new ConflictException("Пользователь с таким email = " + updatedUser.getEmail() + " уже существует!");
-        }
         User user = users.get(userId);
         if (updatedUser.getName() != null) {
             user.setName(updatedUser.getName());
@@ -63,11 +42,12 @@ public class InMemoryUserStorage implements UserStorage {
     }
 
     @Override
+    public Set<Long> getUsersIds() {
+        return new HashSet<>(users.keySet());
+    }
+
+    @Override
     public void deleteUser(long userId) {
-        if (users.containsKey(userId)) {
             users.remove(userId);
-        } else {
-            throw new NotFoundException("Пользователь с таким id = " + userId + " не найден!");
-        }
     }
 }

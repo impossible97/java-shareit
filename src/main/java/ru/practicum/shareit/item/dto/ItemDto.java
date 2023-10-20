@@ -5,7 +5,6 @@ import lombok.Data;
 import lombok.experimental.FieldDefaults;
 
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -14,11 +13,9 @@ import javax.validation.constraints.Size;
 public class ItemDto {
 
     long id;
-    @NotEmpty
     @NotBlank
     String name;
     @Size(max = 200, message = "Максимальная длинна описания 200 символов")
-    @NotEmpty
     @NotBlank
     String description;
     @NotNull
