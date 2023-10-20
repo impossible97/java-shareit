@@ -27,7 +27,7 @@ public class UserValidator {
     }
 
     public void validateEmailWithId(long userId, UserDto user) {
-        boolean b = userStorage.getAllUsers().stream().anyMatch(user1 -> userId != user1.getId() &
+        boolean b = userStorage.getAllUsers().stream().anyMatch(user1 -> userId != user1.getId() &&
                 user1.getEmail().equals(user.getEmail()));
         if (b) {
             throw new ConflictException("Пользователь с таким email = " + user.getEmail() + " уже существует!");
