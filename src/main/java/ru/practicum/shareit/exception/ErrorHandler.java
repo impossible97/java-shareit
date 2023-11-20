@@ -1,5 +1,6 @@
 package ru.practicum.shareit.exception;
 
+import org.springframework.core.convert.ConversionFailedException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -24,5 +25,11 @@ public class ErrorHandler {
     @ResponseStatus(HttpStatus.CONFLICT)
     public ErrorResponse handleConflict(final ConflictException e) {
         return new ErrorResponse("Возник конфликт. Возможен дубликат данных", e.getMessage());
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse handleNotSupportedStatus(ConversionFailedException e) {
+        return new ErrorResponse("Unknown state: UNSUPPORTED_STATUS", e.getMessage());
     }
 }

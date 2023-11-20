@@ -1,4 +1,4 @@
-package ru.practicum.shareit.item;
+package ru.practicum.shareit.item.controller;
 
 import lombok.AllArgsConstructor;
 import org.springframework.validation.annotation.Validated;
@@ -16,8 +16,8 @@ public class ItemController {
     private final ItemService itemService;
 
     @GetMapping("{itemId}")
-    public ItemDto getItem(@PathVariable long itemId) {
-        return itemService.getItem(itemId);
+    public ItemDto getItem(@PathVariable long itemId, @RequestHeader("X-Sharer-User-Id") long userId) {
+        return itemService.getItem(itemId, userId);
     }
 
     @GetMapping
