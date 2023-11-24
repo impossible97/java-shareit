@@ -124,7 +124,7 @@ public class BookingServiceImpl implements BookingService {
                 new NotFoundException("Пользователь с таким id = " + ownerId + " не найден"));
 
         if (state.equals(BookingStatus.ALL)) {
-            return bookingRepository.findAllByOwnerId(ownerId).stream()
+            return bookingRepository.findAllByItem_Owner_IdOrderByStartDesc(ownerId).stream()
                     .map(booking -> bookingMapper.toDto(
                             booking,
                             userRepository.findUserById(booking.getBooker().getId()),
@@ -132,7 +132,7 @@ public class BookingServiceImpl implements BookingService {
                     ))
                     .collect(Collectors.toList());
         } else if (state.equals(BookingStatus.FUTURE)) {
-            return bookingRepository.findAllByOwnerId(ownerId).stream()
+            return bookingRepository.findAllByItem_Owner_IdOrderByStartDesc(ownerId).stream()
                     .filter(booking -> booking.getStatus().equals(BookingStatus.WAITING) || booking.getStatus().equals(BookingStatus.APPROVED))
                     .map(booking -> bookingMapper.toDto(
                             booking,
@@ -140,7 +140,7 @@ public class BookingServiceImpl implements BookingService {
                             itemRepository.findItemById(booking.getItem().getId())))
                     .collect(Collectors.toList());
         } else {
-            return bookingRepository.findAllByOwnerAndStatus(ownerId, state).stream()
+            return bookingRepository.findByItem_Owner_IdAndStatusOrderByStartDesc(ownerId, state).stream()
                     .map(booking -> bookingMapper.toDto(
                             booking,
                             userRepository.findUserById(booking.getBooker().getId()),

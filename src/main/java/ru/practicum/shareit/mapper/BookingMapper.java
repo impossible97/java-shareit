@@ -5,15 +5,15 @@ import org.springframework.stereotype.Component;
 import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.item.model.Item;
-import ru.practicum.shareit.item.model.ItemShort;
+import ru.practicum.shareit.item.model.ItemProjection;
 import ru.practicum.shareit.user.model.User;
-import ru.practicum.shareit.user.model.UserShort;
+import ru.practicum.shareit.user.model.UserProjection;
 
 @Component
 @AllArgsConstructor
 public class BookingMapper {
 
-    public BookingDto toDto(Booking booking, UserShort userShort, ItemShort itemShort) {
+    public BookingDto toDto(Booking booking, UserProjection userShort, ItemProjection itemShort) {
         BookingDto bookingDto = new BookingDto();
 
         bookingDto.setId(booking.getId());

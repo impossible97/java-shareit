@@ -6,8 +6,8 @@ import lombok.Data;
 import lombok.experimental.FieldDefaults;
 import org.springframework.format.annotation.DateTimeFormat;
 import ru.practicum.shareit.booking.model.BookingStatus;
-import ru.practicum.shareit.item.model.ItemShort;
-import ru.practicum.shareit.user.model.UserShort;
+import ru.practicum.shareit.item.model.ItemProjection;
+import ru.practicum.shareit.user.model.UserProjection;
 
 import javax.validation.constraints.FutureOrPresent;
 import javax.validation.constraints.NotNull;
@@ -27,10 +27,9 @@ public class BookingDto {
     @FutureOrPresent
     @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
     LocalDateTime end;
-
     BookingStatus status;
     @NotNull
     Long itemId;
-    UserShort booker;
-    ItemShort item;
+    UserProjection booker;
+    ItemProjection item;
 }

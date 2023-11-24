@@ -2,9 +2,9 @@ package ru.practicum.shareit.user.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import ru.practicum.shareit.user.model.User;
-import ru.practicum.shareit.user.model.UserShort;
+import ru.practicum.shareit.user.model.UserProjection;
 
 public interface UserRepository extends JpaRepository<User, Long> {
 
-    UserShort findUserById(Long userId);
+    UserProjection findUserById(Long userId);
 }

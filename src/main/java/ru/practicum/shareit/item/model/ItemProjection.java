@@ -1,6 +1,6 @@
 package ru.practicum.shareit.item.model;
 
-public interface ItemShort {
+public interface ItemProjection {
 
     Long getId();
     String getName();
