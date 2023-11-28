@@ -15,6 +15,7 @@ import ru.practicum.shareit.mapper.BookingMapper;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.repository.UserRepository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -88,32 +89,48 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     public List<BookingDto> getAllBookingsByBooker(long userId, BookingStatus state) {
-
         userRepository.findById(userId).orElseThrow(() ->
                 new NotFoundException("Пользователь с таким id = " + userId + " не найден"));
 
-        if (state.equals(BookingStatus.ALL)) {
-            return bookingRepository.findAllByBookerIdOrderByStartDesc(userId).stream()
-                    .map(booking -> bookingMapper.toDto(
-                            booking,
-                            userRepository.findUserById(userId),
-                            itemRepository.findItemById(booking.getItem().getId())))
-                    .collect(Collectors.toList());
-        } else if (state.equals(BookingStatus.FUTURE)) {
-            return bookingRepository.findAllByBookerIdOrderByStartDesc(userId).stream()
-                    .filter(booking -> booking.getStatus().equals(BookingStatus.WAITING) || booking.getStatus().equals(BookingStatus.APPROVED))
-                    .map(booking -> bookingMapper.toDto(
-                            booking,
-                            userRepository.findUserById(userId),
-                            itemRepository.findItemById(booking.getItem().getId())))
-                    .collect(Collectors.toList());
-        } else {
-            return bookingRepository.findAllByBookerIdAndStatusOrderByStartDesc(userId, state).stream()
-                    .map(booking -> bookingMapper.toDto(
-                            booking,
-                            userRepository.findUserById(userId),
-                            itemRepository.findItemById(booking.getItem().getId())))
-                    .collect(Collectors.toList());
+        switch (state) {
+            case ALL:
+                return bookingRepository.findAllByBookerIdOrderByStartDesc(userId).stream()
+                        .map(booking -> bookingMapper.toDto(
+                                booking,
+                                userRepository.findUserById(userId),
+                                itemRepository.findItemById(booking.getItem().getId())))
+                        .collect(Collectors.toList());
+            case FUTURE:
+                return bookingRepository.findAllByBooker_IdAndStartAfterOrderByStartDesc(userId, LocalDateTime.now())
+                        .stream()
+                        .map(booking -> bookingMapper.toDto(
+                                booking,
+                                userRepository.findUserById(userId),
+                                itemRepository.findItemById(booking.getItem().getId())))
+                        .collect(Collectors.toList());
+            case CURRENT:
+                return bookingRepository.findAllByBooker_IdAndStartBeforeAndEndAfter(userId, LocalDateTime.now(), LocalDateTime.now())
+                        .stream()
+                        .map(booking -> bookingMapper.toDto(
+                                booking,
+                                userRepository.findUserById(userId),
+                                itemRepository.findItemById(booking.getItem().getId())))
+                        .collect(Collectors.toList());
+            case PAST:
+                return bookingRepository.findAllByBooker_IdAndEndBeforeOrderByStartDesc(userId, LocalDateTime.now()).stream()
+                        .map(booking -> bookingMapper.toDto(
+                                booking,
+                                userRepository.findUserById(userId),
+                                itemRepository.findItemById(booking.getItem().getId())
+                        ))
+                        .collect(Collectors.toList());
+            default:
+                return bookingRepository.findAllByBookerIdAndStatusOrderByStartDesc(userId, state).stream()
+                        .map(booking -> bookingMapper.toDto(
+                                booking,
+                                userRepository.findUserById(userId),
+                                itemRepository.findItemById(booking.getItem().getId())))
+                        .collect(Collectors.toList());
         }
     }
 
@@ -132,12 +149,28 @@ public class BookingServiceImpl implements BookingService {
                     ))
                     .collect(Collectors.toList());
         } else if (state.equals(BookingStatus.FUTURE)) {
-            return bookingRepository.findAllByItem_Owner_IdOrderByStartDesc(ownerId).stream()
-                    .filter(booking -> booking.getStatus().equals(BookingStatus.WAITING) || booking.getStatus().equals(BookingStatus.APPROVED))
+            return bookingRepository.findAllByItem_Owner_IdAndStartAfterOrderByStartDesc(ownerId, LocalDateTime.now())
+                    .stream()
                     .map(booking -> bookingMapper.toDto(
                             booking,
                             userRepository.findUserById(booking.getBooker().getId()),
                             itemRepository.findItemById(booking.getItem().getId())))
+                    .collect(Collectors.toList());
+        } else if (state.equals(BookingStatus.CURRENT)) {
+            return bookingRepository.findAllByItem_Owner_IdAndStartBeforeAndEndAfter(ownerId, LocalDateTime.now(), LocalDateTime.now())
+                    .stream()
+                    .map(booking -> bookingMapper.toDto(
+                            booking,
+                            userRepository.findUserById(booking.getBooker().getId()),
+                            itemRepository.findItemById(booking.getItem().getId())))
+                    .collect(Collectors.toList());
+        } else if (state.equals(BookingStatus.PAST)) {
+            return bookingRepository.findAllByItem_Owner_IdAndEndBeforeOrderByStartDesc(ownerId, LocalDateTime.now()).stream()
+                    .map(booking -> bookingMapper.toDto(
+                            booking,
+                            userRepository.findUserById(booking.getBooker().getId()),
+                            itemRepository.findItemById(booking.getItem().getId())
+                    ))
                     .collect(Collectors.toList());
         } else {
             return bookingRepository.findByItem_Owner_IdAndStatusOrderByStartDesc(ownerId, state).stream()
