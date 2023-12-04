@@ -2,7 +2,9 @@ package ru.practicum.shareit.booking.service;
 
 
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.booking.model.BookingStatus;
@@ -28,6 +30,7 @@ public class BookingServiceImpl implements BookingService {
     private final BookingRepository bookingRepository;
     private final BookingMapper bookingMapper;
 
+    @Transactional
     @Override
     public BookingDto addBooking(long userId, BookingDto bookingDto) {
         User user = userRepository.findById(userId).orElseThrow(() ->
@@ -53,6 +56,7 @@ public class BookingServiceImpl implements BookingService {
                 itemRepository.findItemById(bookingDto.getItemId()));
     }
 
+    @Transactional
     @Override
     public BookingDto changeBookingStatus(long userId, Boolean approved, Long bookingId) {
         Booking booking = bookingRepository.findById(bookingId).orElseThrow(() ->
@@ -74,6 +78,7 @@ public class BookingServiceImpl implements BookingService {
                 booking, userRepository.findUserById(booking.getBooker().getId()), itemRepository.findItemById(booking.getItem().getId()));
     }
 
+    @Transactional(readOnly = true)
     @Override
     public BookingDto getBooking(Long bookingId, long userId) {
         Booking booking = bookingRepository.findById(bookingId).orElseThrow(() ->
@@ -87,6 +92,7 @@ public class BookingServiceImpl implements BookingService {
                 itemRepository.findItemById(booking.getItem().getId()));
     }
 
+    @Transactional(readOnly = true)
     @Override
     public List<BookingDto> getAllBookingsByBooker(long userId, BookingStatus state) {
         userRepository.findById(userId).orElseThrow(() ->
@@ -94,14 +100,16 @@ public class BookingServiceImpl implements BookingService {
 
         switch (state) {
             case ALL:
-                return bookingRepository.findAllByBookerIdOrderByStartDesc(userId).stream()
+                return bookingRepository.findAllByBookerId(userId, Sort.by(Sort.Direction.DESC, "start"))
+                        .stream()
                         .map(booking -> bookingMapper.toDto(
                                 booking,
                                 userRepository.findUserById(userId),
                                 itemRepository.findItemById(booking.getItem().getId())))
                         .collect(Collectors.toList());
             case FUTURE:
-                return bookingRepository.findAllByBooker_IdAndStartAfterOrderByStartDesc(userId, LocalDateTime.now())
+                return bookingRepository.findAllByBooker_IdAndStartAfter(
+                        userId, LocalDateTime.now(), Sort.by(Sort.Direction.DESC, "start"))
                         .stream()
                         .map(booking -> bookingMapper.toDto(
                                 booking,
@@ -117,7 +125,9 @@ public class BookingServiceImpl implements BookingService {
                                 itemRepository.findItemById(booking.getItem().getId())))
                         .collect(Collectors.toList());
             case PAST:
-                return bookingRepository.findAllByBooker_IdAndEndBeforeOrderByStartDesc(userId, LocalDateTime.now()).stream()
+                return bookingRepository.findAllByBooker_IdAndEndBefore(
+                        userId, LocalDateTime.now(), Sort.by(Sort.Direction.DESC, "start"))
+                        .stream()
                         .map(booking -> bookingMapper.toDto(
                                 booking,
                                 userRepository.findUserById(userId),
@@ -125,7 +135,9 @@ public class BookingServiceImpl implements BookingService {
                         ))
                         .collect(Collectors.toList());
             default:
-                return bookingRepository.findAllByBookerIdAndStatusOrderByStartDesc(userId, state).stream()
+                return bookingRepository.findAllByBookerIdAndStatus(
+                        userId, state, Sort.by(Sort.Direction.DESC, "start"))
+                        .stream()
                         .map(booking -> bookingMapper.toDto(
                                 booking,
                                 userRepository.findUserById(userId),
@@ -134,6 +146,7 @@ public class BookingServiceImpl implements BookingService {
         }
     }
 
+    @Transactional(readOnly = true)
     @Override
     public List<BookingDto> getAllBookingsByOwner(long ownerId, BookingStatus state) {
 
@@ -141,7 +154,8 @@ public class BookingServiceImpl implements BookingService {
                 new NotFoundException("Пользователь с таким id = " + ownerId + " не найден"));
 
         if (state.equals(BookingStatus.ALL)) {
-            return bookingRepository.findAllByItem_Owner_IdOrderByStartDesc(ownerId).stream()
+            return bookingRepository.findAllByItem_Owner_Id(ownerId, Sort.by(Sort.Direction.DESC, "start"))
+                    .stream()
                     .map(booking -> bookingMapper.toDto(
                             booking,
                             userRepository.findUserById(booking.getBooker().getId()),
@@ -149,7 +163,8 @@ public class BookingServiceImpl implements BookingService {
                     ))
                     .collect(Collectors.toList());
         } else if (state.equals(BookingStatus.FUTURE)) {
-            return bookingRepository.findAllByItem_Owner_IdAndStartAfterOrderByStartDesc(ownerId, LocalDateTime.now())
+            return bookingRepository.findAllByItem_Owner_IdAndStartAfter(
+                    ownerId, LocalDateTime.now(), Sort.by(Sort.Direction.DESC, "start"))
                     .stream()
                     .map(booking -> bookingMapper.toDto(
                             booking,
@@ -165,7 +180,9 @@ public class BookingServiceImpl implements BookingService {
                             itemRepository.findItemById(booking.getItem().getId())))
                     .collect(Collectors.toList());
         } else if (state.equals(BookingStatus.PAST)) {
-            return bookingRepository.findAllByItem_Owner_IdAndEndBeforeOrderByStartDesc(ownerId, LocalDateTime.now()).stream()
+            return bookingRepository.findAllByItem_Owner_IdAndEndBefore(
+                    ownerId, LocalDateTime.now(), Sort.by(Sort.Direction.DESC, "start"))
+                    .stream()
                     .map(booking -> bookingMapper.toDto(
                             booking,
                             userRepository.findUserById(booking.getBooker().getId()),
@@ -173,7 +190,9 @@ public class BookingServiceImpl implements BookingService {
                     ))
                     .collect(Collectors.toList());
         } else {
-            return bookingRepository.findByItem_Owner_IdAndStatusOrderByStartDesc(ownerId, state).stream()
+            return bookingRepository.findByItem_Owner_IdAndStatus(
+                    ownerId, state, Sort.by(Sort.Direction.DESC, "start"))
+                    .stream()
                     .map(booking -> bookingMapper.toDto(
                             booking,
                             userRepository.findUserById(booking.getBooker().getId()),

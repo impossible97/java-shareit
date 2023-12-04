@@ -1,6 +1,7 @@
 package ru.practicum.shareit.booking.repository;
 
-import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.repository.PagingAndSortingRepository;
 import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.booking.model.BookingProjection;
 import ru.practicum.shareit.booking.model.BookingStatus;
@@ -8,37 +9,37 @@ import ru.practicum.shareit.booking.model.BookingStatus;
 import java.time.LocalDateTime;
 import java.util.List;
 
-public interface BookingRepository extends JpaRepository<Booking, Long> {
+public interface BookingRepository extends PagingAndSortingRepository<Booking, Long> {
 
-    List<Booking> findAllByBookerIdAndStatusOrderByStartDesc(long userId, BookingStatus status);
+    List<Booking> findAllByBookerIdAndStatus(long userId, BookingStatus status, Sort sort);
 
-    List<Booking> findAllByBookerIdOrderByStartDesc(long userId);
+    List<Booking> findAllByBookerId(long userId, Sort sort);
 
-    List<Booking> findAllByBooker_IdAndEndBeforeOrderByStartDesc(long userId, LocalDateTime time);
+    List<Booking> findAllByBooker_IdAndEndBefore(long userId, LocalDateTime time, Sort sort);
 
-    List<Booking> findAllByBooker_IdAndStartAfterOrderByStartDesc(long userId, LocalDateTime time);
+    List<Booking> findAllByBooker_IdAndStartAfter(long userId, LocalDateTime time, Sort sort);
 
-    List<Booking> findByItem_Owner_IdAndStatusOrderByStartDesc(long userId, BookingStatus status);
+    List<Booking> findByItem_Owner_IdAndStatus(long userId, BookingStatus status, Sort sort);
 
-    List<Booking> findAllByItem_Owner_IdOrderByStartDesc(long userId);
+    List<Booking> findAllByItem_Owner_Id(long userId, Sort sort);
 
-    List<Booking> findAllByItem_Owner_IdAndEndBeforeOrderByStartDesc(long userId, LocalDateTime time);
+    List<Booking> findAllByItem_Owner_IdAndEndBefore(long userId, LocalDateTime time, Sort sort);
 
-    List<Booking> findAllByItem_Owner_IdAndStartAfterOrderByStartDesc(long userId, LocalDateTime time);
+    List<Booking> findAllByItem_Owner_IdAndStartAfter(long userId, LocalDateTime time, Sort sort);
 
     List<Booking> findAllByBooker_IdAndStartBeforeAndEndAfter(long userId, LocalDateTime before, LocalDateTime after);
 
     List<Booking> findAllByItem_Owner_IdAndStartBeforeAndEndAfter(long userId, LocalDateTime before, LocalDateTime after);
 
-    BookingProjection findFirstByItem_Owner_IdAndStartBeforeOrderByStartDesc(long userId, LocalDateTime time);
+    BookingProjection findFirstByItem_Owner_IdAndStartBeforeAndStatus(long userId, LocalDateTime time, BookingStatus status, Sort sort);
 
-    BookingProjection findFirstByItem_Owner_IdAndStartAfterOrderByStartAsc(long userId, LocalDateTime time);
+    BookingProjection findFirstByItem_Owner_IdAndStartAfterAndStatus(long userId, LocalDateTime time, BookingStatus status, Sort sort);
 
     Boolean existsByItem_Id(long itemId);
 
     Boolean existsByBooker_IdAndItem_Id(long userId, long itemId);
 
-    List<Booking> findByItem_IdAndBooker_Id(long itemId, long userId);
+    List<Booking> findByItem_IdAndBooker_IdAndStatus(long itemId, long userId, BookingStatus status);
 
     Boolean existsByBooker_IdAndItem_IdAndStartBefore(long userId, long itemId, LocalDateTime time);
 }

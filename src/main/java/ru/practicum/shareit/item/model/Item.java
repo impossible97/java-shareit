@@ -16,8 +16,11 @@ public class Item {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     long id;
+    @Column(name = "name", nullable = false)
     String name;
+    @Column(name = "description", nullable = false, length = 512)
     String description;
+    @Column(name = "available", nullable = false, length = 512)
     Boolean available;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")

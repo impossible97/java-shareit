@@ -17,12 +17,14 @@ public class Comment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     long id;
+    @Column(name = "text", nullable = false)
     String text;
     @ManyToOne
     @JoinColumn(name = "user_id")
     User author;
+    @Column(name = "created")
     LocalDateTime created;
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "item_id")
     Item item;
 }

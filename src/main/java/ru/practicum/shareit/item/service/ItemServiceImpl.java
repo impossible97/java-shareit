@@ -1,7 +1,9 @@
 package ru.practicum.shareit.item.service;
 
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.booking.model.BookingProjection;
 import ru.practicum.shareit.booking.model.BookingStatus;
@@ -37,6 +39,7 @@ public class ItemServiceImpl implements ItemService {
     private final CommentRepository commentRepository;
     private final CommentMapper commentMapper;
 
+    @Transactional
     @Override
     public ItemDto addItem(ItemDto itemDto, long userId) {
         User user = userRepository.findById(userId).orElseThrow(() ->
@@ -64,6 +67,7 @@ public class ItemServiceImpl implements ItemService {
         return itemMapper.toDto(itemRepository.save(item), null, null, new ArrayList<>());
     }
 
+    @Transactional(readOnly = true)
     @Override
     public ItemDto getItem(long itemId, long userId) {
         Item item = itemRepository.findById(itemId).orElseThrow(() ->
@@ -73,16 +77,12 @@ public class ItemServiceImpl implements ItemService {
                 .map(commentMapper::toDto)
                 .collect(Collectors.toList());
 
-        BookingProjection past = bookingRepository.findFirstByItem_Owner_IdAndStartBeforeOrderByStartDesc(userId, LocalDateTime.now());
-        BookingProjection future = bookingRepository.findFirstByItem_Owner_IdAndStartAfterOrderByStartAsc(userId, LocalDateTime.now());
+        BookingProjection past = bookingRepository.findFirstByItem_Owner_IdAndStartBeforeAndStatus(
+                userId, LocalDateTime.now(), BookingStatus.APPROVED, Sort.by(Sort.Direction.DESC, "start"));
+        BookingProjection future = bookingRepository.findFirstByItem_Owner_IdAndStartAfterAndStatus(
+                userId, LocalDateTime.now(), BookingStatus.APPROVED, Sort.by(Sort.Direction.ASC, "start"));
 
         if (item.getOwner().getId() == userId) {
-            if (past != null && past.getStatus().equals(BookingStatus.REJECTED)) {
-                past = null;
-            }
-            if (future != null && future.getStatus().equals(BookingStatus.REJECTED)) {
-                future = null;
-            }
             return itemMapper.toDto(item,
                     past,
                     future,
@@ -93,6 +93,7 @@ public class ItemServiceImpl implements ItemService {
         }
     }
 
+    @Transactional(readOnly = true)
     @Override
     public List<ItemDto> getAll(long userId) {
         List<CommentDto> commentsDto = commentRepository.findAllByAuthor_Id(userId).stream()
@@ -105,8 +106,16 @@ public class ItemServiceImpl implements ItemService {
                     if (bookingRepository.existsByItem_Id(item.getId())) {
                         return itemMapper.toDto(
                                 item,
-                                bookingRepository.findFirstByItem_Owner_IdAndStartBeforeOrderByStartDesc(userId, LocalDateTime.now()),
-                                bookingRepository.findFirstByItem_Owner_IdAndStartAfterOrderByStartAsc(userId, LocalDateTime.now()),
+                                bookingRepository.findFirstByItem_Owner_IdAndStartBeforeAndStatus(
+                                        userId,
+                                        LocalDateTime.now(),
+                                        BookingStatus.APPROVED,
+                                        Sort.by(Sort.Direction.DESC, "start")),
+                                bookingRepository.findFirstByItem_Owner_IdAndStartAfterAndStatus(
+                                        userId,
+                                        LocalDateTime.now(),
+                                        BookingStatus.APPROVED,
+                                        Sort.by(Sort.Direction.ASC, "start")),
                                 commentsDto);
                     } else {
                         return itemMapper.toDto(
@@ -137,12 +146,10 @@ public class ItemServiceImpl implements ItemService {
                 .collect(Collectors.toList());
     }
 
+    @Transactional
     @Override
     public CommentDto addComment(long itemId, long userId, CommentDto commentDto) {
-        List<Booking> bookings = bookingRepository.findByItem_IdAndBooker_Id(itemId, userId);
-        bookings.stream()
-                .filter(booking -> !booking.getStatus().equals(BookingStatus.REJECTED))
-                .collect(Collectors.toList());
+        List<Booking> bookings = bookingRepository.findByItem_IdAndBooker_IdAndStatus(itemId, userId, BookingStatus.APPROVED);
 
         if (bookings.isEmpty() || bookingRepository.existsByBooker_IdAndItem_Id(itemId, userId)) {
             throw new ValidationException("Бронирование пользователя с id = " + userId + " не найдено");
