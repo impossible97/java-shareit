@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.experimental.FieldDefaults;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 
 @Entity
 @Table(name = "users", schema = "public")
@@ -15,8 +16,10 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     long id;
-    @Column(name = "name", nullable = false)
+    @Column(name = "name")
+    @NotNull
     String name;
-    @Column(name = "email", nullable = false, length = 512)
+    @Column(name = "email", length = 512)
+    @NotNull
     String email;
 }

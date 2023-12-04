@@ -6,6 +6,7 @@ import lombok.experimental.FieldDefaults;
 import ru.practicum.shareit.user.model.User;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 
 @Entity
 @Table(name = "items", schema = "public")
@@ -16,11 +17,14 @@ public class Item {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     long id;
-    @Column(name = "name", nullable = false)
+    @Column(name = "name")
+    @NotNull
     String name;
-    @Column(name = "description", nullable = false, length = 512)
+    @Column(name = "description", length = 512)
+    @NotNull
     String description;
-    @Column(name = "available", nullable = false, length = 512)
+    @Column(name = "available", length = 512)
+    @NotNull
     Boolean available;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")

@@ -7,6 +7,7 @@ import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.model.User;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 
 @Entity
@@ -29,6 +30,7 @@ public class Booking {
     @Column(name = "end_datatime")
     LocalDateTime end;
     @Column(name = "status")
+    @NotNull
     @Enumerated(EnumType.STRING)
     BookingStatus status;
 }
