@@ -48,6 +48,7 @@ public class ItemServiceImpl implements ItemService {
         return itemMapper.toDto(itemRepository.save(itemMapper.toEntity(itemDto, user)), null, null, new ArrayList<>());
     }
 
+    @Transactional
     @Override
     public ItemDto updateItem(long userId, long itemId, ItemDto itemDto) {
         Optional<User> optionalUser = userRepository.findById(userId);
@@ -166,5 +167,10 @@ public class ItemServiceImpl implements ItemService {
         Comment comment = commentRepository.save(commentMapper.toEntity(commentDto, user, item));
 
         return commentMapper.toDto(comment);
+    }
+
+    @Transactional(readOnly = true)
+    public void getComment(long itemId) {
+
     }
 }
