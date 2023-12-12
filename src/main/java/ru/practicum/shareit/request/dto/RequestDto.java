@@ -15,7 +15,7 @@ import java.util.List;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Data
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class ItemRequestDto {
+public class RequestDto {
 
     long id;
     @NotBlank

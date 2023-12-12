@@ -1,18 +1,16 @@
 package ru.practicum.shareit.request.service;
 
 import lombok.AllArgsConstructor;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.exception.NotFoundException;
-import ru.practicum.shareit.item.model.Item;
+import ru.practicum.shareit.exception.ValidationException;
 import ru.practicum.shareit.item.repository.ItemRepository;
 import ru.practicum.shareit.mapper.ItemMapper;
 import ru.practicum.shareit.mapper.RequestMapper;
-import ru.practicum.shareit.request.dto.ItemRequestDto;
+import ru.practicum.shareit.request.dto.RequestDto;
 import ru.practicum.shareit.request.model.ItemRequest;
 import ru.practicum.shareit.request.repository.ItemRequestRepository;
 import ru.practicum.shareit.user.model.User;
@@ -34,7 +32,7 @@ public class RequestServiceImpl implements RequestService {
 
     @Transactional
     @Override
-    public ItemRequestDto addRequest(long userId, ItemRequestDto requestDto) {
+    public RequestDto addRequest(long userId, RequestDto requestDto) {
         User user = userRepository.findById(userId).orElseThrow(() ->
                 new NotFoundException("Пользователь с таким id = " + userId + " не найден"));
         ItemRequest itemRequest = requestRepository.save(requestMapper.toEntity(requestDto, user));
@@ -42,7 +40,7 @@ public class RequestServiceImpl implements RequestService {
     }
 
     @Override
-    public List<ItemRequestDto> getRequests(long userId) {
+    public List<RequestDto> getRequests(long userId) {
         userRepository.findById(userId).orElseThrow(() ->
                 new NotFoundException("Пользователь с таким id = " + userId + " не найден"));
 
@@ -53,16 +51,27 @@ public class RequestServiceImpl implements RequestService {
     }
 
     @Override
-    public ItemRequestDto getRequestById(long requestId) {
+    public RequestDto getRequestById(long requestId, long userId) {
+        userRepository.findById(userId).orElseThrow(() ->
+                new NotFoundException("Пользователь с таким id = " + userId + " не найден"));
         ItemRequest request = requestRepository.findById(requestId).orElseThrow(() ->
                 new NotFoundException("Запроса с таким id = " + requestId + " не существует"));
         return requestMapper.toDto(request, itemRepository.findAllByRequest_Id(requestId));
     }
 
     @Override
-    public List<ItemRequestDto> getAllRequests(int from, int size) {
+    public List<RequestDto> getAllRequests(int from, int size, long userId) {
+        if (from < 0) {
+            throw new ValidationException("Возникла ошибка пагинации");
+        }
+        if (size == 0) {
+            throw new ValidationException("Возникла ошибка пагинации"); // ????????????
+        }
+        userRepository.findById(userId).orElseThrow(() ->
+                new NotFoundException("Пользователь с таким id = " + userId + " не найден"));
         return requestRepository.findAll(PageRequest.of(from, size, Sort.by("created").ascending()))
                 .stream()
+                .filter(itemRequest -> userId != itemRequest.getUser().getId())
                 .map(itemRequest -> requestMapper.toDto(itemRequest, itemRepository.findAllByRequest_Id(itemRequest.getId())))
                 .collect(Collectors.toList());
     }

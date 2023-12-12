@@ -1,15 +1,15 @@
 package ru.practicum.shareit.request.service;
 
-import ru.practicum.shareit.request.dto.ItemRequestDto;
+import ru.practicum.shareit.request.dto.RequestDto;
 
 import java.util.List;
 
 public interface RequestService {
-    ItemRequestDto addRequest(long userid, ItemRequestDto requestDto);
+    RequestDto addRequest(long userid, RequestDto requestDto);
 
-    List<ItemRequestDto> getRequests(long userId);
+    List<RequestDto> getRequests(long userId);
 
-    ItemRequestDto getRequestById(long requestId);
+    RequestDto getRequestById(long requestId, long userId);
 
-    List<ItemRequestDto> getAllRequests(int from, int size);
+    List<RequestDto> getAllRequests(int from, int size, long userId);
 }
