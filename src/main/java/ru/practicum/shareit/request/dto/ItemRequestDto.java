@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.experimental.FieldDefaults;
-import ru.practicum.shareit.item.model.Item;
+import ru.practicum.shareit.item.model.ItemRequestProjection;
 
 import javax.validation.constraints.FutureOrPresent;
 import javax.validation.constraints.NotBlank;
@@ -23,5 +23,5 @@ public class ItemRequestDto {
     String description;
     @FutureOrPresent
     LocalDateTime created;
-    List<Item> items;
+    List<ItemRequestProjection> items;
 }

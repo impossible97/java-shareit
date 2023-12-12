@@ -18,6 +18,8 @@ import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.repository.ItemRepository;
 import ru.practicum.shareit.mapper.CommentMapper;
 import ru.practicum.shareit.mapper.ItemMapper;
+import ru.practicum.shareit.request.model.ItemRequest;
+import ru.practicum.shareit.request.repository.ItemRequestRepository;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.repository.UserRepository;
 
@@ -39,13 +41,19 @@ public class ItemServiceImpl implements ItemService {
     private final CommentRepository commentRepository;
     private final CommentMapper commentMapper;
 
+    private final ItemRequestRepository requestRepository;
+
     @Transactional
     @Override
     public ItemDto addItem(ItemDto itemDto, long userId) {
         User user = userRepository.findById(userId).orElseThrow(() ->
                 new NotFoundException("Пользователь с id= " + userId + " не найден"));
-
-        return itemMapper.toDto(itemRepository.save(itemMapper.toEntity(itemDto, user)), null, null, new ArrayList<>());
+        if (itemDto.getRequestId() != null) {
+            ItemRequest request = requestRepository.findById(itemDto.getRequestId()).orElseThrow();
+            return itemMapper.toDto(itemRepository.save(itemMapper.toEntity(itemDto, user, request)), null, null, new ArrayList<>());
+        } else {
+            return  itemMapper.toDto(itemRepository.save(itemMapper.toEntity(itemDto, user, null)), null, null, new ArrayList<>());
+        }
     }
 
     @Transactional
@@ -167,10 +175,5 @@ public class ItemServiceImpl implements ItemService {
         Comment comment = commentRepository.save(commentMapper.toEntity(commentDto, user, item));
 
         return commentMapper.toDto(comment);
-    }
-
-    @Transactional(readOnly = true)
-    public void getComment(long itemId) {
-
     }
 }

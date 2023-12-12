@@ -25,4 +25,5 @@ public class ItemDto {
     BookingProjection lastBooking;
     BookingProjection nextBooking;
     List<CommentDto> comments;
+    Long requestId;
 }
