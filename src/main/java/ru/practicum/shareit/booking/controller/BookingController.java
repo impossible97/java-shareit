@@ -19,7 +19,8 @@ public class BookingController {
 
     @PostMapping
     public BookingDto addBooking(@RequestHeader("X-Sharer-User-Id") long userId,
-                                 @Validated @RequestBody BookingDto bookingDto) {
+                                 @Validated
+                                 @RequestBody BookingDto bookingDto) {
 
         return bookingService.addBooking(userId, bookingDto);
     }
@@ -32,19 +33,24 @@ public class BookingController {
     }
 
     @GetMapping("{bookingId}")
-    public BookingDto getBooking(@PathVariable("bookingId") Long bookingId, @RequestHeader("X-Sharer-User-Id") long userId) {
+    public BookingDto getBooking(@PathVariable("bookingId") Long bookingId,
+                                 @RequestHeader("X-Sharer-User-Id") long userId) {
         return bookingService.getBooking(bookingId, userId);
     }
 
     @GetMapping
     public List<BookingDto> getAllBookingsByBooker(@RequestHeader("X-Sharer-User-Id") long userid,
-                                                 @RequestParam(value = "state", defaultValue = "ALL") final BookingStatus state) {
-        return bookingService.getAllBookingsByBooker(userid, state);
+                                                   @RequestParam(value = "state", defaultValue = "ALL") final BookingStatus state,
+                                                   @RequestParam(name = "from", defaultValue = "0") int from,
+                                                   @RequestParam(name = "size", defaultValue = "20") int size) {
+        return bookingService.getAllBookingsByBooker(userid, state, from, size);
     }
 
     @GetMapping("/owner")
     public List<BookingDto> getAllBookingsByOwner(@RequestHeader("X-Sharer-User-Id") long userid,
-                                                  @RequestParam(value = "state", defaultValue = "ALL") final BookingStatus state) {
-        return bookingService.getAllBookingsByOwner(userid, state);
+                                                  @RequestParam(value = "state", defaultValue = "ALL") final BookingStatus state,
+                                                  @RequestParam(name = "from", defaultValue = "0") int from,
+                                                  @RequestParam(name = "size", defaultValue = "20") int size) {
+        return bookingService.getAllBookingsByOwner(userid, state, from, size);
     }
 }

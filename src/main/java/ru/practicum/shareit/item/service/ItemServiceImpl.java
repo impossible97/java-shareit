@@ -1,6 +1,7 @@
 package ru.practicum.shareit.item.service;
 
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -78,7 +79,7 @@ public class ItemServiceImpl implements ItemService {
 
     @Transactional(readOnly = true)
     @Override
-    public ItemDto getItem(long itemId, long userId) {
+    public ItemDto getItem(long itemId, long userId, int from, int size) {
         Item item = itemRepository.findById(itemId).orElseThrow(() ->
                 new NotFoundException("Вещь с таким id = " + itemId + " не найдена"));
 
@@ -87,9 +88,9 @@ public class ItemServiceImpl implements ItemService {
                 .collect(Collectors.toList());
 
         BookingProjection past = bookingRepository.findFirstByItem_Owner_IdAndStartBeforeAndStatus(
-                userId, LocalDateTime.now(), BookingStatus.APPROVED, Sort.by(Sort.Direction.DESC, "start"));
+                userId, LocalDateTime.now(), BookingStatus.APPROVED, Sort.by("start").descending());
         BookingProjection future = bookingRepository.findFirstByItem_Owner_IdAndStartAfterAndStatus(
-                userId, LocalDateTime.now(), BookingStatus.APPROVED, Sort.by(Sort.Direction.ASC, "start"));
+                userId, LocalDateTime.now(), BookingStatus.APPROVED, Sort.by("start").ascending());
 
         if (item.getOwner().getId() == userId) {
             return itemMapper.toDto(item,
@@ -104,12 +105,16 @@ public class ItemServiceImpl implements ItemService {
 
     @Transactional(readOnly = true)
     @Override
-    public List<ItemDto> getAll(long userId) {
+    public List<ItemDto> getAll(long userId, int from, int size) {
+
+        if (from < 0 || size == 0) {
+            throw new ValidationException("Возникла ошибка пагинации");
+        }
         List<CommentDto> commentsDto = commentRepository.findAllByAuthor_Id(userId).stream()
                 .map(commentMapper::toDto)
                 .collect(Collectors.toList());
 
-        return itemRepository.findAll().stream()
+        return itemRepository.findAll(PageRequest.of(from, size)).stream()
                 .filter(item -> item.getOwner().getId() == userId)
                 .map(item -> {
                     if (bookingRepository.existsByItem_Id(item.getId())) {
@@ -119,12 +124,12 @@ public class ItemServiceImpl implements ItemService {
                                         userId,
                                         LocalDateTime.now(),
                                         BookingStatus.APPROVED,
-                                        Sort.by(Sort.Direction.DESC, "start")),
+                                        Sort.by("start").descending()),
                                 bookingRepository.findFirstByItem_Owner_IdAndStartAfterAndStatus(
                                         userId,
                                         LocalDateTime.now(),
                                         BookingStatus.APPROVED,
-                                        Sort.by(Sort.Direction.ASC, "start")),
+                                        Sort.by("start").ascending()),
                                 commentsDto);
                     } else {
                         return itemMapper.toDto(
@@ -140,11 +145,12 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public List<ItemDto> searchItem(String text) {
+    public List<ItemDto> searchItem(String text, int from, int size) {
         if (text.isBlank()) {
             return new ArrayList<>();
         }
-        return itemRepository.findByText(text).stream()
+        return itemRepository.findByText(text, PageRequest.of(from, size))
+                .stream()
                 .filter(Item::getAvailable)
                 .map(item -> itemMapper.toDto(
                                 item,

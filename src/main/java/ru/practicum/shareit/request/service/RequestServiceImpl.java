@@ -8,7 +8,6 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.exception.ValidationException;
 import ru.practicum.shareit.item.repository.ItemRepository;
-import ru.practicum.shareit.mapper.ItemMapper;
 import ru.practicum.shareit.mapper.RequestMapper;
 import ru.practicum.shareit.request.dto.RequestDto;
 import ru.practicum.shareit.request.model.ItemRequest;
@@ -28,7 +27,6 @@ public class RequestServiceImpl implements RequestService {
     private final UserRepository userRepository;
     private final ItemRequestRepository requestRepository;
     private final ItemRepository itemRepository;
-    private final ItemMapper itemMapper;
 
     @Transactional
     @Override
@@ -39,6 +37,7 @@ public class RequestServiceImpl implements RequestService {
         return requestMapper.toDto(itemRequest, new ArrayList<>());
     }
 
+    @Transactional(readOnly = true)
     @Override
     public List<RequestDto> getRequests(long userId) {
         userRepository.findById(userId).orElseThrow(() ->
@@ -50,6 +49,7 @@ public class RequestServiceImpl implements RequestService {
                 .collect(Collectors.toList());
     }
 
+    @Transactional(readOnly = true)
     @Override
     public RequestDto getRequestById(long requestId, long userId) {
         userRepository.findById(userId).orElseThrow(() ->
@@ -59,13 +59,11 @@ public class RequestServiceImpl implements RequestService {
         return requestMapper.toDto(request, itemRepository.findAllByRequest_Id(requestId));
     }
 
+    @Transactional(readOnly = true)
     @Override
     public List<RequestDto> getAllRequests(int from, int size, long userId) {
-        if (from < 0) {
+        if (from < 0 || size == 0) {
             throw new ValidationException("Возникла ошибка пагинации");
-        }
-        if (size == 0) {
-            throw new ValidationException("Возникла ошибка пагинации"); // ????????????
         }
         userRepository.findById(userId).orElseThrow(() ->
                 new NotFoundException("Пользователь с таким id = " + userId + " не найден"));
