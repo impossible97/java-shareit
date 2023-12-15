@@ -7,4 +7,6 @@ import ru.practicum.shareit.user.model.UserProjection;
 public interface UserRepository extends JpaRepository<User, Long> {
 
     UserProjection findUserById(Long userId);
+
+    User findByEmail(String email);
 }
