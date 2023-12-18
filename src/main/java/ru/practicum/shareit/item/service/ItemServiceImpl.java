@@ -28,7 +28,6 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -50,7 +49,7 @@ public class ItemServiceImpl implements ItemService {
                 new NotFoundException("Пользователь с id= " + userId + " не найден"));
         if (itemDto.getRequestId() != null) {
             ItemRequest request = requestRepository.findById(itemDto.getRequestId()).orElseThrow();
-            return itemMapper.toDto(itemRepository.save(itemMapper.toEntity(itemDto, user, request)), null, null, new ArrayList<>());
+            return itemMapper.toDto((itemRepository.save(itemMapper.toEntity(itemDto, user, request))), null, null, new ArrayList<>());
         } else {
             return  itemMapper.toDto(itemRepository.save(itemMapper.toEntity(itemDto, user, null)), null, null, new ArrayList<>());
         }
@@ -59,8 +58,8 @@ public class ItemServiceImpl implements ItemService {
     @Transactional
     @Override
     public ItemDto updateItem(long userId, long itemId, ItemDto itemDto) {
-        Optional<User> optionalUser = userRepository.findById(userId);
-        User user = optionalUser.orElseThrow(() -> new NotFoundException("Пользователь с id= " + userId + " не найден"));
+        User user = userRepository.findById(userId).orElseThrow(() ->
+                new NotFoundException("Пользователь с id= " + userId + " не найден"));
         user.setId(userId);
         Item item = itemRepository.findById(itemId).orElseThrow(() ->
                 new NotFoundException("Вещь с таким id = " + itemId + " не найдена"));
