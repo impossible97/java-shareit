@@ -8,6 +8,7 @@ import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.repository.CommentRepository;
@@ -30,6 +31,7 @@ import static org.mockito.ArgumentMatchers.anyLong;
 @Transactional
 @SpringBootTest
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
 class ItemServiceIntegrationTest {
 
     @MockBean
@@ -83,7 +85,19 @@ class ItemServiceIntegrationTest {
 
     @Test
     void updateItemTest() {
-        // TODO Done
+        UserDto user = userService.createUser(userDto);
+
+        ItemDto createdItem = itemService.addItem(itemDto1, user.getId());
+        createdItem.setName("NewName");
+        createdItem.setDescription("NewDescription");
+        createdItem.setAvailable(false);
+
+        ItemDto updatedItem = itemService.updateItem(user.getId(), createdItem.getId(), createdItem);
+
+        assertThat(createdItem.getId(), equalTo(updatedItem.getId()));
+        assertThat(createdItem.getName(), equalTo(updatedItem.getName()));
+        assertThat(createdItem.getDescription(), equalTo(updatedItem.getDescription()));
+        assertThat(createdItem.getAvailable(), equalTo(updatedItem.getAvailable()));
     }
 
     @Test
@@ -106,7 +120,13 @@ class ItemServiceIntegrationTest {
 
     @Test
     void getItemTest() {
-        // TODO Done
+        UserDto user = userService.createUser(userDto);
+
+        ItemDto createdItem = itemService.addItem(itemDto1, user.getId());
+        ItemDto item = itemService.getItem(createdItem.getId(), user.getId(), 1, 10);
+
+        assertThat(item, notNullValue());
+        assertThat(createdItem.getId(), equalTo(item.getId()));
     }
 
     @Test
