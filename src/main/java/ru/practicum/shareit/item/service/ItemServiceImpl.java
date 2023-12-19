@@ -104,7 +104,6 @@ public class ItemServiceImpl implements ItemService {
     @Transactional(readOnly = true)
     @Override
     public List<ItemDto> getAll(long userId, int from, int size) {
-
         if (from < 0 || size == 0) {
             throw new ValidationException("Возникла ошибка пагинации");
         }
