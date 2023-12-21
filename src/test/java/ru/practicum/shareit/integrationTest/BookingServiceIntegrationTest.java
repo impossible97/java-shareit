@@ -22,7 +22,8 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @Transactional
@@ -89,7 +90,7 @@ class BookingServiceIntegrationTest {
     }
 
     @Test
-    void addBookingWithWrongUserIdTest () {
+    void addBookingWithWrongUserIdTest() {
         bookingDto1.setItemId(item1.getId());
 
         assertThrows(NotFoundException.class, () -> bookingService.addBooking(99, bookingDto1));
