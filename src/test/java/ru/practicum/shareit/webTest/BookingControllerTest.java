@@ -114,7 +114,7 @@ class BookingControllerTest {
     }
 
     @Test
-    void changeBookingStatusTest() throws Exception{
+    void changeBookingStatusTest() throws Exception {
         Mockito
                 .when(bookingService.changeBookingStatus(anyLong(), any(), anyLong()))
                 .thenReturn(bookingDto);

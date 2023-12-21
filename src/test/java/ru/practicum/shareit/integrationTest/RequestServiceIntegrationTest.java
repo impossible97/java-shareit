@@ -44,7 +44,7 @@ class RequestServiceIntegrationTest {
     }
 
     @BeforeEach
-    void setRequestService () {
+    void setRequestService() {
         user = userService.createUser(userDto);
     }
 
