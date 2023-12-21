@@ -28,6 +28,7 @@ public class ItemMapperTest {
     private BookingProjection nextBooking;
     private User user;
     private Booking booking;
+    private ItemRequest itemRequest;
 
     @BeforeAll
     static void setMapper() {
@@ -41,13 +42,16 @@ public class ItemMapperTest {
         user.setName("Name");
         user.setEmail("email@email.com");
 
+        itemRequest = new ItemRequest();
+        itemRequest.setId(1L);
+
         item = new Item();
         item.setId(1L);
         item.setName("Item");
         item.setDescription("Description");
         item.setAvailable(true);
-        item.setRequest(new ItemRequest());
         item.setOwner(user);
+        item.setRequest(itemRequest);
 
         booking = new Booking();
         booking.setId(1L);
@@ -108,6 +112,7 @@ public class ItemMapperTest {
         itemDto.setLastBooking(lastBooking);
         itemDto.setNextBooking(nextBooking);
         itemDto.setComments(new ArrayList<>());
+        itemDto.setRequestId(itemRequest.getId());
 
     }
 
@@ -121,7 +126,7 @@ public class ItemMapperTest {
 
     @Test
     void toEntityTest() {
-        Item entity = itemMapper.toEntity(itemDto, user, new ItemRequest());
+        Item entity = itemMapper.toEntity(itemDto, user, itemRequest);
 
         assertThat(entity, notNullValue());
         assertThat(entity.getName(), equalTo(itemDto.getName()));
