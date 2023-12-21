@@ -32,6 +32,7 @@ public class BookingMapperTest {
     static void setMapper() {
         bookingMapper = new BookingMapper();
     }
+
     @BeforeEach
     void setObjects() {
         user = new User();
