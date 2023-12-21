@@ -31,6 +31,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
 class BookingServiceIntegrationTest {
+
     private final BookingService bookingService;
     private final UserService userService;
     private final ItemService itemService;

@@ -1,4 +1,4 @@
-package ru.practicum.shareit.unitTest;
+package ru.practicum.shareit.serviceUnitTest;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
