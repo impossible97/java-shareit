@@ -31,19 +31,17 @@ class ItemJpaTest {
     private final ItemRepository itemRepository;
     private final UserRepository userRepository;
     private final ItemRequestRepository requestRepository;
-    private User owner;
-    private User booker;
     private Item item;
     private ItemRequest request;
 
     @BeforeEach
     void setItemRepository() {
-        owner = new User();
+        User owner = new User();
 
         owner.setName("Owner");
         owner.setEmail("owner@mail.ru");
 
-        booker = new User();
+        User booker = new User();
 
         booker.setName("Name");
         booker.setEmail("email@email.ru");
@@ -89,7 +87,7 @@ class ItemJpaTest {
     }
 
     @Test
-    void findAllByRequest_IdTest() {
+    void findAllByRequestIdTest() {
         Item savedItem = itemRepository.save(item);
 
         List<ItemRequestProjection> byRequestId = itemRepository.findAllByRequest_Id(request.getId());

@@ -22,7 +22,7 @@ import static org.hamcrest.Matchers.hasItem;
 @DataJpaTest
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
-public class RequestJpaTest {
+class RequestJpaTest {
 
     private final ItemRequestRepository requestRepository;
     private final UserRepository userRepository;

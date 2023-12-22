@@ -81,120 +81,120 @@ class BookingJpaTest {
     void findAllByBookerIdAndStatusTest() {
         Booking savedBooking = bookingRepository.save(booking);
 
-        List<Booking> allByBookerIdAndStatus = bookingRepository.findAllByBookerIdAndStatus(1L, BookingStatus.APPROVED, PageRequest.of(0, 10));
+        List<Booking> items = bookingRepository.findAllByBookerIdAndStatus(1L, BookingStatus.APPROVED, PageRequest.of(0, 10));
 
-        assertThat(allByBookerIdAndStatus.size(), equalTo(1));
-        assertThat(allByBookerIdAndStatus, hasItem(savedBooking));
+        assertThat(items.size(), equalTo(1));
+        assertThat(items, hasItem(savedBooking));
     }
 
     @Test
     void findAllByBookerIdTest() {
         Booking savedBooking = bookingRepository.save(booking);
 
-        List<Booking> allByBookerId = bookingRepository.findAllByBookerId(booker.getId(), PageRequest.of(0, 10));
+        List<Booking> items = bookingRepository.findAllByBookerId(booker.getId(), PageRequest.of(0, 10));
 
-        assertThat(allByBookerId.size(), equalTo(1));
-        assertThat(allByBookerId, hasItem(savedBooking));
+        assertThat(items.size(), equalTo(1));
+        assertThat(items, hasItem(savedBooking));
     }
 
     @Test
-    void findAllByBooker_IdAndEndBeforeTest() {
+    void findAllByBookerIdAndEndBeforeTest() {
         booking.setStart(LocalDateTime.of(2022, 12,12, 0, 0));
         booking.setEnd(LocalDateTime.of(2022, 12, 12, 1, 0));
         Booking savedBooking = bookingRepository.save(booking);
 
-        List<Booking> allByBooker_idAndEndBefore = bookingRepository.findAllByBooker_IdAndEndBefore(
+        List<Booking> items = bookingRepository.findAllByBooker_IdAndEndBefore(
                 booking.getId(), LocalDateTime.now(), PageRequest.of(0, 10));
 
-        assertThat(allByBooker_idAndEndBefore.size(), equalTo(1));
-        assertThat(allByBooker_idAndEndBefore, hasItem(savedBooking));
+        assertThat(items.size(), equalTo(1));
+        assertThat(items, hasItem(savedBooking));
     }
 
     @Test
-    void findAllByBooker_IdAndStartAfterTest() {
+    void findAllByBookerIdAndStartAfterTest() {
         booking.setStart(LocalDateTime.of(2024, 12,12, 0, 0));
         booking.setEnd(LocalDateTime.of(2024, 12, 12, 1, 0));
         Booking savedBooking = bookingRepository.save(booking);
 
-        List<Booking> allByBooker_idAndStartAfter = bookingRepository.findAllByBooker_IdAndStartAfter(
+        List<Booking> items = bookingRepository.findAllByBooker_IdAndStartAfter(
                 booking.getId(), LocalDateTime.now(), PageRequest.of(0, 10));
 
-        assertThat(allByBooker_idAndStartAfter.size(), equalTo(1));
-        assertThat(allByBooker_idAndStartAfter, hasItem(savedBooking));
+        assertThat(items.size(), equalTo(1));
+        assertThat(items, hasItem(savedBooking));
     }
 
     @Test
-    void findByItem_Owner_IdAndStatusTest() {
+    void findByItemOwnerIdAndStatusTest() {
         Booking savedBooking = bookingRepository.save(booking);
 
-        List<Booking> byItem_owner_idAndStatus = bookingRepository.findByItem_Owner_IdAndStatus(
+        List<Booking> items = bookingRepository.findByItem_Owner_IdAndStatus(
                 owner.getId(), BookingStatus.APPROVED, PageRequest.of(0, 10));
 
-        assertThat(byItem_owner_idAndStatus.size(), equalTo(1));
-        assertThat(byItem_owner_idAndStatus, hasItem(savedBooking));
+        assertThat(items.size(), equalTo(1));
+        assertThat(items, hasItem(savedBooking));
     }
 
     @Test
-    void findAllByItem_Owner_IdTest() {
+    void findAllByItemOwnerIdTest() {
         Booking savedBooking = bookingRepository.save(booking);
 
-        List<Booking> allByItem_owner_id = bookingRepository.findAllByItem_Owner_Id(
+        List<Booking> items = bookingRepository.findAllByItem_Owner_Id(
                 owner.getId(), PageRequest.of(0, 10));
 
-        assertThat(allByItem_owner_id.size(), equalTo(1));
-        assertThat(allByItem_owner_id, hasItem(savedBooking));
+        assertThat(items.size(), equalTo(1));
+        assertThat(items, hasItem(savedBooking));
     }
 
     @Test
-    void findAllByItem_Owner_IdAndEndBeforeTest() {
+    void findAllByItemOwnerIdAndEndBeforeTest() {
         Booking savedBooking = bookingRepository.save(booking);
 
-        List<Booking> allByItem_owner_idAndEndBefore = bookingRepository.findAllByItem_Owner_IdAndEndBefore(
+        List<Booking> items = bookingRepository.findAllByItem_Owner_IdAndEndBefore(
                 owner.getId(), LocalDateTime.now(), PageRequest.of(0, 10));
 
-        assertThat(allByItem_owner_idAndEndBefore.size(), equalTo(0));
-        assertThat(allByItem_owner_idAndEndBefore, not(savedBooking));
+        assertThat(items.size(), equalTo(0));
+        assertThat(items, not(savedBooking));
     }
 
     @Test
-    void findAllByItem_Owner_IdAndStartAfterTest() {
+    void findAllByItemOwnerIdAndStartAfterTest() {
         Booking savedBooking = bookingRepository.save(booking);
 
-        List<Booking> allByItem_owner_idAndStartAfter = bookingRepository.findAllByItem_Owner_IdAndStartAfter(
+        List<Booking> items = bookingRepository.findAllByItem_Owner_IdAndStartAfter(
                 owner.getId(), LocalDateTime.now().minusHours(3), PageRequest.of(0, 10));
 
-        assertThat(allByItem_owner_idAndStartAfter.size(), equalTo(1));
-        assertThat(allByItem_owner_idAndStartAfter, hasItem(savedBooking));
+        assertThat(items.size(), equalTo(1));
+        assertThat(items, hasItem(savedBooking));
     }
 
     @Test
-    void findAllByBooker_IdAndStartBeforeAndEndAfterTest() {
+    void findAllByBookerIdAndStartBeforeAndEndAfterTest() {
         Booking savedBooking = bookingRepository.save(booking);
         booking.setStart(LocalDateTime.now().minusHours(1));
         booking.setEnd(LocalDateTime.now().plusHours(1));
 
-        List<Booking> allByBooker_idAndStartBeforeAndEndAfter = bookingRepository.findAllByBooker_IdAndStartBeforeAndEndAfter(
+        List<Booking> items = bookingRepository.findAllByBooker_IdAndStartBeforeAndEndAfter(
                 booker.getId(), LocalDateTime.now(), LocalDateTime.now().plusSeconds(100), PageRequest.of(0, 10));
 
-        assertThat(allByBooker_idAndStartBeforeAndEndAfter.size(), equalTo(1));
-        assertThat(allByBooker_idAndStartBeforeAndEndAfter, hasItem(savedBooking));
+        assertThat(items.size(), equalTo(1));
+        assertThat(items, hasItem(savedBooking));
     }
 
     @Test
-    void findAllByItem_Owner_IdAndStartBeforeAndEndAfterTest() {
+    void findAllByItemOwnerIdAndStartBeforeAndEndAfterTest() {
         Booking savedBooking = bookingRepository.save(booking);
         booking.setStart(LocalDateTime.now().minusHours(1));
         booking.setEnd(LocalDateTime.now().plusHours(1));
 
-        List<Booking> allByItem_owner_idAndStartBeforeAndEndAfter = bookingRepository.findAllByItem_Owner_IdAndStartBeforeAndEndAfter(
+        List<Booking> items = bookingRepository.findAllByItem_Owner_IdAndStartBeforeAndEndAfter(
                 owner.getId(), LocalDateTime.now(), LocalDateTime.now().plusSeconds(100), PageRequest.of(0, 10));
 
-        assertThat(allByItem_owner_idAndStartBeforeAndEndAfter.size(), equalTo(1));
-        assertThat(allByItem_owner_idAndStartBeforeAndEndAfter, hasItem(savedBooking));
+        assertThat(items.size(), equalTo(1));
+        assertThat(items, hasItem(savedBooking));
     }
 
     @Test
-    void findFirstByItem_Owner_IdAndStartBeforeAndStatusTest() {
+    void findFirstByItemOwnerIdAndStartBeforeAndStatusTest() {
         Booking savedBooking = bookingRepository.save(booking);
 
         BookingProjection start = bookingRepository.findFirstByItem_Owner_IdAndStartBeforeAndStatus(
@@ -205,7 +205,7 @@ class BookingJpaTest {
     }
 
     @Test
-    void findFirstByItem_Owner_IdAndStartAfterAndStatusTest() {
+    void findFirstByItemOwnerIdAndStartAfterAndStatusTest() {
         Booking savedBooking = bookingRepository.save(booking);
 
         BookingProjection start = bookingRepository.findFirstByItem_Owner_IdAndStartAfterAndStatus(
@@ -216,7 +216,7 @@ class BookingJpaTest {
     }
 
     @Test
-    void existsByItem_IdTest() {
+    void existsByItemIdTest() {
         Booking savedBooking = bookingRepository.save(booking);
 
         Boolean isExists = bookingRepository.existsByItem_Id(item.getId());
@@ -226,7 +226,7 @@ class BookingJpaTest {
     }
     
     @Test
-    void existsByBooker_IdAndItem_IdTest() {
+    void existsByBookerIdAndItem_IdTest() {
         Booking savedBooking = bookingRepository.save(booking);
 
         Boolean isExists = bookingRepository.existsByBooker_IdAndItem_Id(booking.getId(), item.getId());
@@ -236,7 +236,7 @@ class BookingJpaTest {
     }
 
     @Test
-    void findByItem_IdAndBooker_IdAndStatusTest() {
+    void findByItemIdAndBookerIdAndStatusTest() {
         Booking savedBooking = bookingRepository.save(booking);
 
         List<Booking> bookings = bookingRepository.findByItem_IdAndBooker_IdAndStatus(item.getId(), booker.getId(), BookingStatus.APPROVED);
@@ -246,7 +246,7 @@ class BookingJpaTest {
     }
 
     @Test
-    void existsByBooker_IdAndItem_IdAndStartBeforeTest() {
+    void existsByBookerIdAndItemIdAndStartBeforeTest() {
         Booking savedBooking = bookingRepository.save(booking);
 
         Boolean isExists = bookingRepository.existsByBooker_IdAndItem_IdAndStartBefore(
