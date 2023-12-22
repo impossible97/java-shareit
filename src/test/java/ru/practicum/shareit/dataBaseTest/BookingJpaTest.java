@@ -224,7 +224,7 @@ class BookingJpaTest {
         assertThat(isExists, notNullValue());
         assertThat(isExists, equalTo(true));
     }
-    
+
     @Test
     void existsByBookerIdAndItem_IdTest() {
         Booking savedBooking = bookingRepository.save(booking);
