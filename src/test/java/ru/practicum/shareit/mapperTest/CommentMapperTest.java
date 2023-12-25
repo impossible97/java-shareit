@@ -1,6 +1,5 @@
 package ru.practicum.shareit.mapperTest;
 
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import ru.practicum.shareit.item.dto.CommentDto;
@@ -15,18 +14,13 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.notNullValue;
 
-public class CommentMapperTest {
+class CommentMapperTest {
 
     private CommentDto commentDto;
     private User user;
     private Item item;
     private Comment comment;
-    private static CommentMapper commentMapper;
-
-    @BeforeAll
-    static void setMapper() {
-        commentMapper = new CommentMapper();
-    }
+    private static final CommentMapper commentMapper = new CommentMapper();
 
     @BeforeEach
     void setObjects() {

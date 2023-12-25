@@ -134,7 +134,7 @@ class BookingServiceUnitTest {
         Mockito
                 .when(userRepository.findById(anyLong()))
                 .thenReturn(Optional.of(booker));
-        assertThrows(ValidationException.class, () -> bookingService.getAllBookingsByBooker(
+        assertThrows(IllegalArgumentException.class, () -> bookingService.getAllBookingsByBooker(
                 booker.getId(), BookingStatus.ALL, -1, 10));
     }
 
@@ -143,7 +143,7 @@ class BookingServiceUnitTest {
         Mockito
                 .when(userRepository.findById(anyLong()))
                 .thenReturn(Optional.of(booker));
-        assertThrows(ValidationException.class, () -> bookingService.getAllBookingsByBooker(
+        assertThrows(IllegalArgumentException.class, () -> bookingService.getAllBookingsByBooker(
                 booker.getId(), BookingStatus.ALL, 0, 0));
     }
 
@@ -152,7 +152,7 @@ class BookingServiceUnitTest {
         Mockito
                 .when(userRepository.findById(anyLong()))
                 .thenReturn(Optional.of(owner));
-        assertThrows(ValidationException.class, () -> bookingService.getAllBookingsByOwner(
+        assertThrows(IllegalArgumentException.class, () -> bookingService.getAllBookingsByOwner(
                 owner.getId(), BookingStatus.ALL, -1, 10));
     }
 
@@ -161,7 +161,7 @@ class BookingServiceUnitTest {
         Mockito
                 .when(userRepository.findById(anyLong()))
                 .thenReturn(Optional.of(owner));
-        assertThrows(ValidationException.class, () -> bookingService.getAllBookingsByOwner(
+        assertThrows(IllegalArgumentException.class, () -> bookingService.getAllBookingsByOwner(
                 owner.getId(), BookingStatus.ALL, 0, 0));
     }
 }

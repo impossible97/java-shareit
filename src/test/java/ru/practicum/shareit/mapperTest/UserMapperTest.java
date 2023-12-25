@@ -1,6 +1,5 @@
 package ru.practicum.shareit.mapperTest;
 
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import ru.practicum.shareit.mapper.UserMapper;
@@ -11,16 +10,11 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.notNullValue;
 
-public class UserMapperTest {
+class UserMapperTest {
 
-    private static UserMapper userMapper;
+    private static final UserMapper userMapper = new UserMapper();
     private User user;
     private UserDto userDto;
-
-    @BeforeAll
-    static void setMapper() {
-        userMapper = new UserMapper();
-    }
 
     @BeforeEach
     void setObjects() {

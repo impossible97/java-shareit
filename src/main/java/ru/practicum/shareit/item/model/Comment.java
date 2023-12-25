@@ -1,7 +1,6 @@
 package ru.practicum.shareit.item.model;
 
-import lombok.AccessLevel;
-import lombok.Data;
+import lombok.*;
 import lombok.experimental.FieldDefaults;
 import ru.practicum.shareit.user.model.User;
 
@@ -12,7 +11,9 @@ import java.time.LocalDateTime;
 @Entity
 @Table(name = "comments", schema = "public")
 @FieldDefaults(level = AccessLevel.PRIVATE)
-@Data
+@Getter
+@Setter
+@ToString
 public class Comment {
 
     @Id
@@ -28,5 +29,6 @@ public class Comment {
     LocalDateTime created;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "item_id")
+    @ToString.Exclude
     Item item;
 }

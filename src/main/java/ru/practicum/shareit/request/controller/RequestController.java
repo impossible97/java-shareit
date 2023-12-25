@@ -6,11 +6,14 @@ import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.request.dto.RequestDto;
 import ru.practicum.shareit.request.service.RequestService;
 
+import javax.validation.constraints.Positive;
+import javax.validation.constraints.PositiveOrZero;
 import java.util.List;
 
 @RestController
 @RequestMapping(path = "/requests")
 @AllArgsConstructor
+@Validated
 public class RequestController {
 
     private final RequestService requestService;
@@ -34,8 +37,8 @@ public class RequestController {
 
     @GetMapping("all")
     List<RequestDto> getAllRequests(
-            @RequestParam(name = "from", defaultValue = "0") int from,
-            @RequestParam(name = "size", defaultValue = "20") int size,
+            @PositiveOrZero @RequestParam(name = "from", defaultValue = "0") int from,
+            @Positive @RequestParam(name = "size", defaultValue = "20") int size,
             @RequestHeader("X-Sharer-User-Id") long userId) {
         return requestService.getAllRequests(from, size, userId);
     }

@@ -48,7 +48,8 @@ public class ItemServiceImpl implements ItemService {
         User user = userRepository.findById(userId).orElseThrow(() ->
                 new NotFoundException("Пользователь с id= " + userId + " не найден"));
         if (itemDto.getRequestId() != null) {
-            ItemRequest request = requestRepository.findById(itemDto.getRequestId()).orElseThrow();
+            ItemRequest request = requestRepository.findById(itemDto.getRequestId()).orElseThrow(() ->
+                    new NotFoundException(("Запрос с таким id = " + itemDto.getRequestId() + " не найден")));
             return itemMapper.toDto((itemRepository.save(itemMapper.toEntity(itemDto, user, request))), null, null, new ArrayList<>());
         } else {
             return  itemMapper.toDto(itemRepository.save(itemMapper.toEntity(itemDto, user, null)), null, null, new ArrayList<>());
@@ -104,9 +105,7 @@ public class ItemServiceImpl implements ItemService {
     @Transactional(readOnly = true)
     @Override
     public List<ItemDto> getAll(long userId, int from, int size) {
-        if (from < 0 || size == 0) {
-            throw new ValidationException("Возникла ошибка пагинации");
-        }
+
         List<CommentDto> commentsDto = commentRepository.findAllByAuthor_Id(userId).stream()
                 .map(commentMapper::toDto)
                 .collect(Collectors.toList());

@@ -62,9 +62,6 @@ public class RequestServiceImpl implements RequestService {
     @Transactional(readOnly = true)
     @Override
     public List<RequestDto> getAllRequests(int from, int size, long userId) {
-        if (from < 0 || size == 0) {
-            throw new ValidationException("Возникла ошибка пагинации");
-        }
         userRepository.findById(userId).orElseThrow(() ->
                 new NotFoundException("Пользователь с таким id = " + userId + " не найден"));
         return requestRepository.findAll(PageRequest.of(from, size, Sort.by("created").ascending()))

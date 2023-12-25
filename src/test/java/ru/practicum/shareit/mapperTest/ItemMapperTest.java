@@ -1,6 +1,5 @@
 package ru.practicum.shareit.mapperTest;
 
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import ru.practicum.shareit.booking.model.Booking;
@@ -19,9 +18,9 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.notNullValue;
 
-public class ItemMapperTest {
+class ItemMapperTest {
 
-    private static ItemMapper itemMapper;
+    private static final ItemMapper itemMapper = new ItemMapper();
     private Item item;
     private ItemDto itemDto;
     private BookingProjection lastBooking;
@@ -29,11 +28,6 @@ public class ItemMapperTest {
     private User user;
     private Booking booking;
     private ItemRequest itemRequest;
-
-    @BeforeAll
-    static void setMapper() {
-        itemMapper = new ItemMapper();
-    }
 
     @BeforeEach
     void setObjects() {
