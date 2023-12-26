@@ -110,7 +110,7 @@ public class ItemServiceImpl implements ItemService {
                 .map(commentMapper::toDto)
                 .collect(Collectors.toList());
 
-        return itemRepository.findAll(PageRequest.of(from/size, size)).stream()
+        return itemRepository.findAll(PageRequest.of(from / size, size)).stream()
                 .filter(item -> item.getOwner().getId() == userId)
                 .map(item -> {
                     if (bookingRepository.existsByItem_Id(item.getId())) {
@@ -145,7 +145,7 @@ public class ItemServiceImpl implements ItemService {
         if (text.isBlank()) {
             return new ArrayList<>();
         }
-        return itemRepository.findByText(text, PageRequest.of(from/size, size))
+        return itemRepository.findByText(text, PageRequest.of(from / size, size))
                 .stream()
                 .filter(Item::getAvailable)
                 .map(item -> itemMapper.toDto(

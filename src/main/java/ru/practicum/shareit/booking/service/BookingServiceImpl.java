@@ -99,8 +99,8 @@ public class BookingServiceImpl implements BookingService {
         userRepository.findById(userId).orElseThrow(() ->
                 new NotFoundException("Пользователь с таким id = " + userId + " не найден"));
 
-        PageRequest descPageRequest = PageRequest.of(from/size, size, Sort.by("start").descending());
-        PageRequest ascPageRequest = PageRequest.of(from/size, size, Sort.by("start").ascending());
+        PageRequest descPageRequest = PageRequest.of(from / size, size, Sort.by("start").descending());
+        PageRequest ascPageRequest = PageRequest.of(from / size, size, Sort.by("start").ascending());
 
         switch (state) {
             case ALL:
@@ -159,7 +159,7 @@ public class BookingServiceImpl implements BookingService {
         userRepository.findById(ownerId).orElseThrow(() ->
                 new NotFoundException("Пользователь с таким id = " + ownerId + " не найден"));
 
-        PageRequest descPageRequest = PageRequest.of(from/size, size, Sort.by("start").descending());
+        PageRequest descPageRequest = PageRequest.of(from / size, size, Sort.by("start").descending());
 
         switch (state) {
             case ALL:
