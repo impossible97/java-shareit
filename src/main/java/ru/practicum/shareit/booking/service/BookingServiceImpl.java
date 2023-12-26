@@ -102,49 +102,54 @@ public class BookingServiceImpl implements BookingService {
         PageRequest descPageRequest = PageRequest.of(from/size, size, Sort.by("start").descending());
         PageRequest ascPageRequest = PageRequest.of(from/size, size, Sort.by("start").ascending());
 
-        return switch (state) {
-            case ALL -> bookingRepository.findAllByBookerId(
-                            userId, descPageRequest)
-                    .stream()
-                    .map(booking -> bookingMapper.toDto(
-                            booking,
-                            userRepository.findUserById(userId),
-                            itemRepository.findItemById(booking.getItem().getId())))
-                    .collect(Collectors.toList());
-            case FUTURE -> bookingRepository.findAllByBooker_IdAndStartAfter(
-                            userId, LocalDateTime.now(), descPageRequest)
-                    .stream()
-                    .map(booking -> bookingMapper.toDto(
-                            booking,
-                            userRepository.findUserById(userId),
-                            itemRepository.findItemById(booking.getItem().getId())))
-                    .collect(Collectors.toList());
-            case CURRENT -> bookingRepository.findAllByBooker_IdAndStartBeforeAndEndAfter(
-                            userId, LocalDateTime.now(), LocalDateTime.now(), ascPageRequest)
-                    .stream()
-                    .map(booking -> bookingMapper.toDto(
-                            booking,
-                            userRepository.findUserById(userId),
-                            itemRepository.findItemById(booking.getItem().getId())))
-                    .collect(Collectors.toList());
-            case PAST -> bookingRepository.findAllByBooker_IdAndEndBefore(
-                            userId, LocalDateTime.now(), descPageRequest)
-                    .stream()
-                    .map(booking -> bookingMapper.toDto(
-                            booking,
-                            userRepository.findUserById(userId),
-                            itemRepository.findItemById(booking.getItem().getId())
-                    ))
-                    .collect(Collectors.toList());
-            default -> bookingRepository.findAllByBookerIdAndStatus(
-                            userId, state, descPageRequest)
-                    .stream()
-                    .map(booking -> bookingMapper.toDto(
-                            booking,
-                            userRepository.findUserById(userId),
-                            itemRepository.findItemById(booking.getItem().getId())))
-                    .collect(Collectors.toList());
-        };
+        switch (state) {
+            case ALL:
+                return bookingRepository.findAllByBookerId(
+                        userId, descPageRequest)
+                        .stream()
+                        .map(booking -> bookingMapper.toDto(
+                                booking,
+                                userRepository.findUserById(userId),
+                                itemRepository.findItemById(booking.getItem().getId())))
+                        .collect(Collectors.toList());
+            case FUTURE:
+                return bookingRepository.findAllByBooker_IdAndStartAfter(
+                        userId, LocalDateTime.now(), descPageRequest)
+                        .stream()
+                        .map(booking -> bookingMapper.toDto(
+                                booking,
+                                userRepository.findUserById(userId),
+                                itemRepository.findItemById(booking.getItem().getId())))
+                        .collect(Collectors.toList());
+            case CURRENT:
+                return bookingRepository.findAllByBooker_IdAndStartBeforeAndEndAfter(
+                        userId, LocalDateTime.now(), LocalDateTime.now(), ascPageRequest)
+                        .stream()
+                        .map(booking -> bookingMapper.toDto(
+                                booking,
+                                userRepository.findUserById(userId),
+                                itemRepository.findItemById(booking.getItem().getId())))
+                        .collect(Collectors.toList());
+            case PAST:
+                return bookingRepository.findAllByBooker_IdAndEndBefore(
+                        userId, LocalDateTime.now(), descPageRequest)
+                        .stream()
+                        .map(booking -> bookingMapper.toDto(
+                                booking,
+                                userRepository.findUserById(userId),
+                                itemRepository.findItemById(booking.getItem().getId())
+                        ))
+                        .collect(Collectors.toList());
+            default:
+                return bookingRepository.findAllByBookerIdAndStatus(
+                        userId, state, descPageRequest)
+                        .stream()
+                        .map(booking -> bookingMapper.toDto(
+                                booking,
+                                userRepository.findUserById(userId),
+                                itemRepository.findItemById(booking.getItem().getId())))
+                        .collect(Collectors.toList());
+        }
     }
 
     @Transactional(readOnly = true)
@@ -156,50 +161,55 @@ public class BookingServiceImpl implements BookingService {
 
         PageRequest descPageRequest = PageRequest.of(from/size, size, Sort.by("start").descending());
 
-        return switch (state) {
-            case ALL -> bookingRepository.findAllByItem_Owner_Id(
-                            ownerId, descPageRequest)
-                    .stream()
-                    .map(booking -> bookingMapper.toDto(
-                            booking,
-                            userRepository.findUserById(booking.getBooker().getId()),
-                            itemRepository.findItemById(booking.getItem().getId())
-                    ))
-                    .collect(Collectors.toList());
-            case FUTURE -> bookingRepository.findAllByItem_Owner_IdAndStartAfter(
-                            ownerId, LocalDateTime.now(), descPageRequest)
-                    .stream()
-                    .map(booking -> bookingMapper.toDto(
-                            booking,
-                            userRepository.findUserById(booking.getBooker().getId()),
-                            itemRepository.findItemById(booking.getItem().getId())))
-                    .collect(Collectors.toList());
-            case CURRENT -> bookingRepository.findAllByItem_Owner_IdAndStartBeforeAndEndAfter(
-                            ownerId, LocalDateTime.now(), LocalDateTime.now(), descPageRequest)
-                    .stream()
-                    .map(booking -> bookingMapper.toDto(
-                            booking,
-                            userRepository.findUserById(booking.getBooker().getId()),
-                            itemRepository.findItemById(booking.getItem().getId())))
-                    .collect(Collectors.toList());
-            case PAST -> bookingRepository.findAllByItem_Owner_IdAndEndBefore(
-                            ownerId, LocalDateTime.now(), descPageRequest)
-                    .stream()
-                    .map(booking -> bookingMapper.toDto(
-                            booking,
-                            userRepository.findUserById(booking.getBooker().getId()),
-                            itemRepository.findItemById(booking.getItem().getId())
-                    ))
-                    .collect(Collectors.toList());
-            default -> bookingRepository.findByItem_Owner_IdAndStatus(
-                            ownerId, state, descPageRequest)
-                    .stream()
-                    .map(booking -> bookingMapper.toDto(
-                            booking,
-                            userRepository.findUserById(booking.getBooker().getId()),
-                            itemRepository.findItemById(booking.getItem().getId())
-                    ))
-                    .collect(Collectors.toList());
-        };
+        switch (state) {
+            case ALL:
+                return bookingRepository.findAllByItem_Owner_Id(
+                                ownerId, descPageRequest)
+                        .stream()
+                        .map(booking -> bookingMapper.toDto(
+                                booking,
+                                userRepository.findUserById(booking.getBooker().getId()),
+                                itemRepository.findItemById(booking.getItem().getId())
+                        ))
+                        .collect(Collectors.toList());
+            case FUTURE:
+                return bookingRepository.findAllByItem_Owner_IdAndStartAfter(
+                                ownerId, LocalDateTime.now(), descPageRequest)
+                        .stream()
+                        .map(booking -> bookingMapper.toDto(
+                                booking,
+                                userRepository.findUserById(booking.getBooker().getId()),
+                                itemRepository.findItemById(booking.getItem().getId())))
+                        .collect(Collectors.toList());
+            case CURRENT:
+                return bookingRepository.findAllByItem_Owner_IdAndStartBeforeAndEndAfter(
+                                ownerId, LocalDateTime.now(), LocalDateTime.now(), descPageRequest)
+                        .stream()
+                        .map(booking -> bookingMapper.toDto(
+                                booking,
+                                userRepository.findUserById(booking.getBooker().getId()),
+                                itemRepository.findItemById(booking.getItem().getId())))
+                        .collect(Collectors.toList());
+            case PAST:
+                return bookingRepository.findAllByItem_Owner_IdAndEndBefore(
+                                ownerId, LocalDateTime.now(), descPageRequest)
+                        .stream()
+                        .map(booking -> bookingMapper.toDto(
+                                booking,
+                                userRepository.findUserById(booking.getBooker().getId()),
+                                itemRepository.findItemById(booking.getItem().getId())
+                        ))
+                        .collect(Collectors.toList());
+            default:
+                return bookingRepository.findByItem_Owner_IdAndStatus(
+                                ownerId, state, descPageRequest)
+                        .stream()
+                        .map(booking -> bookingMapper.toDto(
+                                booking,
+                                userRepository.findUserById(booking.getBooker().getId()),
+                                itemRepository.findItemById(booking.getItem().getId())
+                        ))
+                        .collect(Collectors.toList());
+        }
     }
 }
