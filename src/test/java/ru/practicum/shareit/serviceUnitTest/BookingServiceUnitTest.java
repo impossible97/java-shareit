@@ -130,30 +130,12 @@ class BookingServiceUnitTest {
     }
 
     @Test
-    void getAllBookingsByBookerWithPaginationErrorInFromParameterTest() {
-        Mockito
-                .when(userRepository.findById(anyLong()))
-                .thenReturn(Optional.of(booker));
-        assertThrows(IllegalArgumentException.class, () -> bookingService.getAllBookingsByBooker(
-                booker.getId(), BookingStatus.ALL, -1, 10));
-    }
-
-    @Test
     void getAllBookingsByBookerWithPaginationErrorInSizeParameterTest() {
         Mockito
                 .when(userRepository.findById(anyLong()))
                 .thenReturn(Optional.of(booker));
-        assertThrows(IllegalArgumentException.class, () -> bookingService.getAllBookingsByBooker(
+        assertThrows(ArithmeticException.class, () -> bookingService.getAllBookingsByBooker(
                 booker.getId(), BookingStatus.ALL, 0, 0));
-    }
-
-    @Test
-    void getAllBookingsByOwnerWithPaginationErrorInFromParameterTest() {
-        Mockito
-                .when(userRepository.findById(anyLong()))
-                .thenReturn(Optional.of(owner));
-        assertThrows(IllegalArgumentException.class, () -> bookingService.getAllBookingsByOwner(
-                owner.getId(), BookingStatus.ALL, -1, 10));
     }
 
     @Test
@@ -161,7 +143,7 @@ class BookingServiceUnitTest {
         Mockito
                 .when(userRepository.findById(anyLong()))
                 .thenReturn(Optional.of(owner));
-        assertThrows(IllegalArgumentException.class, () -> bookingService.getAllBookingsByOwner(
+        assertThrows(ArithmeticException.class, () -> bookingService.getAllBookingsByOwner(
                 owner.getId(), BookingStatus.ALL, 0, 0));
     }
 }

@@ -109,7 +109,7 @@ class ItemControllerTest {
     @Test
     void getItemTest() throws Exception {
         Mockito
-                .when(itemService.getItem(anyLong(), anyLong(), anyInt(), anyInt()))
+                .when(itemService.getItem(anyLong(), anyLong()))
                 .thenReturn(itemDto);
 
         mvc.perform(get("/items/{itemId}", itemDto.getId())

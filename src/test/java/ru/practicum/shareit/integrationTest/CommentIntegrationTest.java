@@ -131,6 +131,6 @@ class CommentIntegrationTest {
         itemService.addComment(item.getId(), user2.getId(), comment);
 
         assertThat(item.getComments(), notNullValue());
-        assertThat(itemService.getItem(item.getId(), user1.getId(), 0, 10).getComments().get(0).getText(), equalTo(comment.getText()));
+        assertThat(itemService.getItem(item.getId(), user1.getId()).getComments().get(0).getText(), equalTo(comment.getText()));
     }
 }

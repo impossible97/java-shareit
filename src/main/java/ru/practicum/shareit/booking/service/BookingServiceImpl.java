@@ -98,56 +98,53 @@ public class BookingServiceImpl implements BookingService {
     public List<BookingDto> getAllBookingsByBooker(long userId, BookingStatus state, int from, int size) {
         userRepository.findById(userId).orElseThrow(() ->
                 new NotFoundException("Пользователь с таким id = " + userId + " не найден"));
-        PageRequest descPageRequest = PageRequest.of(from, size, Sort.by("start").descending());
-        PageRequest ascPageRequest = PageRequest.of(from, size, Sort.by("start").ascending());
-        switch (state) {
-            case ALL:
-                return bookingRepository.findAllByBookerId(
-                        userId, PageRequest.of(from, size, Sort.by("start").descending()))
-                        .stream()
-                        .map(booking -> bookingMapper.toDto(
-                                booking,
-                                userRepository.findUserById(userId),
-                                itemRepository.findItemById(booking.getItem().getId())))
-                        .collect(Collectors.toList());
-            case FUTURE:
-                return bookingRepository.findAllByBooker_IdAndStartAfter(
-                        userId, LocalDateTime.now(), descPageRequest)
-                        .stream()
-                        .map(booking -> bookingMapper.toDto(
-                                booking,
-                                userRepository.findUserById(userId),
-                                itemRepository.findItemById(booking.getItem().getId())))
-                        .collect(Collectors.toList());
-            case CURRENT:
-                return bookingRepository.findAllByBooker_IdAndStartBeforeAndEndAfter(
-                        userId, LocalDateTime.now(), LocalDateTime.now(), ascPageRequest)
-                        .stream()
-                        .map(booking -> bookingMapper.toDto(
-                                booking,
-                                userRepository.findUserById(userId),
-                                itemRepository.findItemById(booking.getItem().getId())))
-                        .collect(Collectors.toList());
-            case PAST:
-                return bookingRepository.findAllByBooker_IdAndEndBefore(
-                        userId, LocalDateTime.now(), descPageRequest)
-                        .stream()
-                        .map(booking -> bookingMapper.toDto(
-                                booking,
-                                userRepository.findUserById(userId),
-                                itemRepository.findItemById(booking.getItem().getId())
-                        ))
-                        .collect(Collectors.toList());
-            default:
-                return bookingRepository.findAllByBookerIdAndStatus(
-                        userId, state, descPageRequest)
-                        .stream()
-                        .map(booking -> bookingMapper.toDto(
-                                booking,
-                                userRepository.findUserById(userId),
-                                itemRepository.findItemById(booking.getItem().getId())))
-                        .collect(Collectors.toList());
-        }
+
+        PageRequest descPageRequest = PageRequest.of(from/size, size, Sort.by("start").descending());
+        PageRequest ascPageRequest = PageRequest.of(from/size, size, Sort.by("start").ascending());
+
+        return switch (state) {
+            case ALL -> bookingRepository.findAllByBookerId(
+                            userId, descPageRequest)
+                    .stream()
+                    .map(booking -> bookingMapper.toDto(
+                            booking,
+                            userRepository.findUserById(userId),
+                            itemRepository.findItemById(booking.getItem().getId())))
+                    .collect(Collectors.toList());
+            case FUTURE -> bookingRepository.findAllByBooker_IdAndStartAfter(
+                            userId, LocalDateTime.now(), descPageRequest)
+                    .stream()
+                    .map(booking -> bookingMapper.toDto(
+                            booking,
+                            userRepository.findUserById(userId),
+                            itemRepository.findItemById(booking.getItem().getId())))
+                    .collect(Collectors.toList());
+            case CURRENT -> bookingRepository.findAllByBooker_IdAndStartBeforeAndEndAfter(
+                            userId, LocalDateTime.now(), LocalDateTime.now(), ascPageRequest)
+                    .stream()
+                    .map(booking -> bookingMapper.toDto(
+                            booking,
+                            userRepository.findUserById(userId),
+                            itemRepository.findItemById(booking.getItem().getId())))
+                    .collect(Collectors.toList());
+            case PAST -> bookingRepository.findAllByBooker_IdAndEndBefore(
+                            userId, LocalDateTime.now(), descPageRequest)
+                    .stream()
+                    .map(booking -> bookingMapper.toDto(
+                            booking,
+                            userRepository.findUserById(userId),
+                            itemRepository.findItemById(booking.getItem().getId())
+                    ))
+                    .collect(Collectors.toList());
+            default -> bookingRepository.findAllByBookerIdAndStatus(
+                            userId, state, descPageRequest)
+                    .stream()
+                    .map(booking -> bookingMapper.toDto(
+                            booking,
+                            userRepository.findUserById(userId),
+                            itemRepository.findItemById(booking.getItem().getId())))
+                    .collect(Collectors.toList());
+        };
     }
 
     @Transactional(readOnly = true)
@@ -157,11 +154,11 @@ public class BookingServiceImpl implements BookingService {
         userRepository.findById(ownerId).orElseThrow(() ->
                 new NotFoundException("Пользователь с таким id = " + ownerId + " не найден"));
 
-        PageRequest descPageRequest = PageRequest.of(from, size, Sort.by("start").descending());
+        PageRequest descPageRequest = PageRequest.of(from/size, size, Sort.by("start").descending());
 
-        if (state.equals(BookingStatus.ALL)) {
-            return bookingRepository.findAllByItem_Owner_Id(
-                    ownerId, descPageRequest)
+        return switch (state) {
+            case ALL -> bookingRepository.findAllByItem_Owner_Id(
+                            ownerId, descPageRequest)
                     .stream()
                     .map(booking -> bookingMapper.toDto(
                             booking,
@@ -169,27 +166,24 @@ public class BookingServiceImpl implements BookingService {
                             itemRepository.findItemById(booking.getItem().getId())
                     ))
                     .collect(Collectors.toList());
-        } else if (state.equals(BookingStatus.FUTURE)) {
-            return bookingRepository.findAllByItem_Owner_IdAndStartAfter(
-                    ownerId, LocalDateTime.now(), descPageRequest)
+            case FUTURE -> bookingRepository.findAllByItem_Owner_IdAndStartAfter(
+                            ownerId, LocalDateTime.now(), descPageRequest)
                     .stream()
                     .map(booking -> bookingMapper.toDto(
                             booking,
                             userRepository.findUserById(booking.getBooker().getId()),
                             itemRepository.findItemById(booking.getItem().getId())))
                     .collect(Collectors.toList());
-        } else if (state.equals(BookingStatus.CURRENT)) {
-            return bookingRepository.findAllByItem_Owner_IdAndStartBeforeAndEndAfter(
-                    ownerId, LocalDateTime.now(), LocalDateTime.now(), descPageRequest)
+            case CURRENT -> bookingRepository.findAllByItem_Owner_IdAndStartBeforeAndEndAfter(
+                            ownerId, LocalDateTime.now(), LocalDateTime.now(), descPageRequest)
                     .stream()
                     .map(booking -> bookingMapper.toDto(
                             booking,
                             userRepository.findUserById(booking.getBooker().getId()),
                             itemRepository.findItemById(booking.getItem().getId())))
                     .collect(Collectors.toList());
-        } else if (state.equals(BookingStatus.PAST)) {
-            return bookingRepository.findAllByItem_Owner_IdAndEndBefore(
-                    ownerId, LocalDateTime.now(), descPageRequest)
+            case PAST -> bookingRepository.findAllByItem_Owner_IdAndEndBefore(
+                            ownerId, LocalDateTime.now(), descPageRequest)
                     .stream()
                     .map(booking -> bookingMapper.toDto(
                             booking,
@@ -197,9 +191,8 @@ public class BookingServiceImpl implements BookingService {
                             itemRepository.findItemById(booking.getItem().getId())
                     ))
                     .collect(Collectors.toList());
-        } else {
-            return bookingRepository.findByItem_Owner_IdAndStatus(
-                    ownerId, state, descPageRequest)
+            default -> bookingRepository.findByItem_Owner_IdAndStatus(
+                            ownerId, state, descPageRequest)
                     .stream()
                     .map(booking -> bookingMapper.toDto(
                             booking,
@@ -207,6 +200,6 @@ public class BookingServiceImpl implements BookingService {
                             itemRepository.findItemById(booking.getItem().getId())
                     ))
                     .collect(Collectors.toList());
-        }
+        };
     }
 }

@@ -20,10 +20,8 @@ public class ItemController {
     private final ItemService itemService;
 
     @GetMapping("{itemId}")
-    public ItemDto getItem(@PathVariable long itemId, @RequestHeader("X-Sharer-User-Id") long userId,
-                           @PositiveOrZero @RequestParam(name = "from", defaultValue = "0") int from,
-                           @Positive @RequestParam(name = "size", defaultValue = "20") int size) {
-        return itemService.getItem(itemId, userId, from, size);
+    public ItemDto getItem(@PathVariable long itemId, @RequestHeader("X-Sharer-User-Id") long userId) {
+        return itemService.getItem(itemId, userId);
     }
 
     @GetMapping

@@ -78,7 +78,7 @@ public class ItemServiceImpl implements ItemService {
 
     @Transactional(readOnly = true)
     @Override
-    public ItemDto getItem(long itemId, long userId, int from, int size) {
+    public ItemDto getItem(long itemId, long userId) {
         Item item = itemRepository.findById(itemId).orElseThrow(() ->
                 new NotFoundException("Вещь с таким id = " + itemId + " не найдена"));
 
@@ -110,7 +110,7 @@ public class ItemServiceImpl implements ItemService {
                 .map(commentMapper::toDto)
                 .collect(Collectors.toList());
 
-        return itemRepository.findAll(PageRequest.of(from, size)).stream()
+        return itemRepository.findAll(PageRequest.of(from/size, size)).stream()
                 .filter(item -> item.getOwner().getId() == userId)
                 .map(item -> {
                     if (bookingRepository.existsByItem_Id(item.getId())) {
@@ -145,7 +145,7 @@ public class ItemServiceImpl implements ItemService {
         if (text.isBlank()) {
             return new ArrayList<>();
         }
-        return itemRepository.findByText(text, PageRequest.of(from, size))
+        return itemRepository.findByText(text, PageRequest.of(from/size, size))
                 .stream()
                 .filter(Item::getAvailable)
                 .map(item -> itemMapper.toDto(

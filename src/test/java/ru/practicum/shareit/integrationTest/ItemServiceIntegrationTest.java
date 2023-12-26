@@ -123,7 +123,7 @@ class ItemServiceIntegrationTest {
         UserDto user = userService.createUser(userDto);
 
         ItemDto createdItem = itemService.addItem(itemDto1, user.getId());
-        ItemDto item = itemService.getItem(createdItem.getId(), user.getId(), 1, 10);
+        ItemDto item = itemService.getItem(createdItem.getId(), user.getId());
 
         assertThat(item, notNullValue());
         assertThat(createdItem.getId(), equalTo(item.getId()));
@@ -135,7 +135,7 @@ class ItemServiceIntegrationTest {
 
         itemService.addItem(itemDto1, user.getId());
 
-        assertThrows(NotFoundException.class, () -> itemService.getItem(99, user.getId(), 0, 10));
+        assertThrows(NotFoundException.class, () -> itemService.getItem(99, user.getId()));
     }
 
     @Test
