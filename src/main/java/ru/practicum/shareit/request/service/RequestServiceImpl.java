@@ -63,7 +63,7 @@ public class RequestServiceImpl implements RequestService {
     public List<RequestDto> getAllRequests(int from, int size, long userId) {
         userRepository.findById(userId).orElseThrow(() ->
                 new NotFoundException("Пользователь с таким id = " + userId + " не найден"));
-        return requestRepository.findAll(PageRequest.of(from/size, size, Sort.by("created").ascending()))
+        return requestRepository.findAll(PageRequest.of(from / size, size, Sort.by("created").ascending()))
                 .stream()
                 .filter(itemRequest -> userId != itemRequest.getUser().getId())
                 .map(itemRequest -> requestMapper.toDto(itemRequest, itemRepository.findAllByRequest_Id(itemRequest.getId())))
