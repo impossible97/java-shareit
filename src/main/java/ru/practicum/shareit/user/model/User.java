@@ -1,7 +1,6 @@
 package ru.practicum.shareit.user.model;
 
-import lombok.AccessLevel;
-import lombok.Data;
+import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 import javax.persistence.*;
@@ -9,7 +8,9 @@ import javax.validation.constraints.NotNull;
 
 @Entity
 @Table(name = "users", schema = "public")
-@Data
+@Getter
+@Setter
+@ToString
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class User {
 

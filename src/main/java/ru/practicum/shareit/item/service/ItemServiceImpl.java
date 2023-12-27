@@ -1,6 +1,7 @@
 package ru.practicum.shareit.item.service;
 
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,6 +19,8 @@ import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.repository.ItemRepository;
 import ru.practicum.shareit.mapper.CommentMapper;
 import ru.practicum.shareit.mapper.ItemMapper;
+import ru.practicum.shareit.request.model.ItemRequest;
+import ru.practicum.shareit.request.repository.ItemRequestRepository;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.repository.UserRepository;
 
@@ -25,7 +28,6 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -38,21 +40,27 @@ public class ItemServiceImpl implements ItemService {
     private final BookingRepository bookingRepository;
     private final CommentRepository commentRepository;
     private final CommentMapper commentMapper;
+    private final ItemRequestRepository requestRepository;
 
     @Transactional
     @Override
     public ItemDto addItem(ItemDto itemDto, long userId) {
         User user = userRepository.findById(userId).orElseThrow(() ->
                 new NotFoundException("Пользователь с id= " + userId + " не найден"));
-
-        return itemMapper.toDto(itemRepository.save(itemMapper.toEntity(itemDto, user)), null, null, new ArrayList<>());
+        if (itemDto.getRequestId() != null) {
+            ItemRequest request = requestRepository.findById(itemDto.getRequestId()).orElseThrow(() ->
+                    new NotFoundException(("Запрос с таким id = " + itemDto.getRequestId() + " не найден")));
+            return itemMapper.toDto((itemRepository.save(itemMapper.toEntity(itemDto, user, request))), null, null, new ArrayList<>());
+        } else {
+            return  itemMapper.toDto(itemRepository.save(itemMapper.toEntity(itemDto, user, null)), null, null, new ArrayList<>());
+        }
     }
 
     @Transactional
     @Override
     public ItemDto updateItem(long userId, long itemId, ItemDto itemDto) {
-        Optional<User> optionalUser = userRepository.findById(userId);
-        User user = optionalUser.orElseThrow(() -> new NotFoundException("Пользователь с id= " + userId + " не найден"));
+        User user = userRepository.findById(userId).orElseThrow(() ->
+                new NotFoundException("Пользователь с id= " + userId + " не найден"));
         user.setId(userId);
         Item item = itemRepository.findById(itemId).orElseThrow(() ->
                 new NotFoundException("Вещь с таким id = " + itemId + " не найдена"));
@@ -79,9 +87,9 @@ public class ItemServiceImpl implements ItemService {
                 .collect(Collectors.toList());
 
         BookingProjection past = bookingRepository.findFirstByItem_Owner_IdAndStartBeforeAndStatus(
-                userId, LocalDateTime.now(), BookingStatus.APPROVED, Sort.by(Sort.Direction.DESC, "start"));
+                userId, LocalDateTime.now(), BookingStatus.APPROVED, Sort.by("start").descending());
         BookingProjection future = bookingRepository.findFirstByItem_Owner_IdAndStartAfterAndStatus(
-                userId, LocalDateTime.now(), BookingStatus.APPROVED, Sort.by(Sort.Direction.ASC, "start"));
+                userId, LocalDateTime.now(), BookingStatus.APPROVED, Sort.by("start").ascending());
 
         if (item.getOwner().getId() == userId) {
             return itemMapper.toDto(item,
@@ -96,12 +104,13 @@ public class ItemServiceImpl implements ItemService {
 
     @Transactional(readOnly = true)
     @Override
-    public List<ItemDto> getAll(long userId) {
+    public List<ItemDto> getAll(long userId, int from, int size) {
+
         List<CommentDto> commentsDto = commentRepository.findAllByAuthor_Id(userId).stream()
                 .map(commentMapper::toDto)
                 .collect(Collectors.toList());
 
-        return itemRepository.findAll().stream()
+        return itemRepository.findAll(PageRequest.of(from / size, size)).stream()
                 .filter(item -> item.getOwner().getId() == userId)
                 .map(item -> {
                     if (bookingRepository.existsByItem_Id(item.getId())) {
@@ -111,12 +120,12 @@ public class ItemServiceImpl implements ItemService {
                                         userId,
                                         LocalDateTime.now(),
                                         BookingStatus.APPROVED,
-                                        Sort.by(Sort.Direction.DESC, "start")),
+                                        Sort.by("start").descending()),
                                 bookingRepository.findFirstByItem_Owner_IdAndStartAfterAndStatus(
                                         userId,
                                         LocalDateTime.now(),
                                         BookingStatus.APPROVED,
-                                        Sort.by(Sort.Direction.ASC, "start")),
+                                        Sort.by("start").ascending()),
                                 commentsDto);
                     } else {
                         return itemMapper.toDto(
@@ -132,11 +141,12 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public List<ItemDto> searchItem(String text) {
+    public List<ItemDto> searchItem(String text, int from, int size) {
         if (text.isBlank()) {
             return new ArrayList<>();
         }
-        return itemRepository.findByText(text).stream()
+        return itemRepository.findByText(text, PageRequest.of(from / size, size))
+                .stream()
                 .filter(Item::getAvailable)
                 .map(item -> itemMapper.toDto(
                                 item,
@@ -167,10 +177,5 @@ public class ItemServiceImpl implements ItemService {
         Comment comment = commentRepository.save(commentMapper.toEntity(commentDto, user, item));
 
         return commentMapper.toDto(comment);
-    }
-
-    @Transactional(readOnly = true)
-    public void getComment(long itemId) {
-
     }
 }

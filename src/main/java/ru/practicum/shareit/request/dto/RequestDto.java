@@ -1,29 +1,27 @@
-package ru.practicum.shareit.item.dto;
+package ru.practicum.shareit.request.dto;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.experimental.FieldDefaults;
-import ru.practicum.shareit.booking.model.BookingProjection;
+import ru.practicum.shareit.item.model.ItemRequestProjection;
 
+import javax.validation.constraints.FutureOrPresent;
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import java.time.LocalDateTime;
 import java.util.List;
 
-@Data
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class ItemDto {
+@Data
+@JsonInclude(JsonInclude.Include.NON_NULL)
+public class RequestDto {
 
     long id;
     @NotBlank
-    String name;
     @Size(max = 200, message = "Максимальная длинна описания 200 символов")
-    @NotBlank
     String description;
-    @NotNull
-    Boolean available;
-    BookingProjection lastBooking;
-    BookingProjection nextBooking;
-    List<CommentDto> comments;
-    Long requestId;
+    @FutureOrPresent
+    LocalDateTime created;
+    List<ItemRequestProjection> items;
 }

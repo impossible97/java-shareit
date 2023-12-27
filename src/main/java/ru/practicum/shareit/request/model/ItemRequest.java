@@ -1,4 +1,4 @@
-package ru.practicum.shareit.item.model;
+package ru.practicum.shareit.request.model;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -9,26 +9,23 @@ import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "comments", schema = "public")
+@Table(name = "requests")
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Getter
 @Setter
 @ToString
-public class Comment {
+public class ItemRequest {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     long id;
-    @Column(name = "text")
     @NotNull
-    String text;
-    @ManyToOne
-    @JoinColumn(name = "user_id")
-    User author;
-    @Column(name = "created")
-    LocalDateTime created;
+    @Column(name = "description")
+    String description;
+    @Column(name = "created_time")
+    LocalDateTime created = LocalDateTime.now();
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "item_id")
+    @JoinColumn(name = "user_id")
     @ToString.Exclude
-    Item item;
+    User user;
 }

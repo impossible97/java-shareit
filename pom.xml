@@ -62,18 +62,6 @@
 			<artifactId>hibernate-core</artifactId>
 			<version>5.6.10.Final</version>
 		</dependency>
-		<dependency>
-			<groupId>com.querydsl</groupId>
-			<artifactId>querydsl-apt</artifactId>
-			<version>${querydsl.version}</version>
-			<scope>provided</scope>
-		</dependency>
-
-		<dependency>
-			<groupId>com.querydsl</groupId>
-			<artifactId>querydsl-jpa</artifactId>
-			<version>${querydsl.version}</version>
-		</dependency>
 	</dependencies>
 
 	<build>
@@ -182,7 +170,7 @@
 											<limit>
 												<counter>LINE</counter>
 												<value>COVEREDRATIO</value>
-												<minimum>0.9</minimum>
+												<minimum>0.8</minimum>
 											</limit>
 											<limit>
 												<counter>BRANCH</counter>

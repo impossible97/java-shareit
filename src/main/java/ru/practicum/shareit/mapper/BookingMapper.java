@@ -22,6 +22,7 @@ public class BookingMapper {
         bookingDto.setBooker(userShort);
         bookingDto.setItem(itemShort);
         bookingDto.setStatus(booking.getStatus());
+        bookingDto.setItemId(booking.getItem().getId());
 
         return bookingDto;
     }
