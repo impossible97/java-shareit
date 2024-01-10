@@ -13,7 +13,7 @@ import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 
 @JsonTest
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
-class UserDtoJsonTest {
+class UserDtoTest {
 
     private final JacksonTester<UserDto> json;
 

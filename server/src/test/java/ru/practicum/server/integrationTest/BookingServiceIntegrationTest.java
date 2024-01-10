@@ -109,14 +109,10 @@ class BookingServiceIntegrationTest {
         bookingDto1.setItemId(item1.getId());
 
         assertThrows(NotFoundException.class, () -> bookingService.addBooking(owner.getId(), bookingDto1));
-        /*
-        Можно убрать этот тест, так как я его проверил в юнит тестах с моками.
-        Такое решения принял, так как в данной проверки нет взаимодействия с БД.
-         */
     }
 
     @Test
-    void addBookingWithUnavailableStatusTest() { // Можно в Юнит
+    void addBookingWithUnavailableStatusTest() {
         item1.setAvailable(false);
         itemService.updateItem(owner.getId(), item1.getId(), item1);
         bookingDto1.setItemId(item1.getId());
@@ -125,7 +121,7 @@ class BookingServiceIntegrationTest {
     }
 
     @Test
-    void addBookingWithWrongBookingTimeTest() { // Можно в Юнит
+    void addBookingWithWrongBookingTimeTest() {
         bookingDto1.setItemId(item1.getId());
         bookingDto1.setEnd(bookingDto1.getStart());
 
@@ -157,7 +153,7 @@ class BookingServiceIntegrationTest {
     }
 
     @Test
-    void changeBookingStatusWithNotBookerIdTest() { // Можно в Юнит
+    void changeBookingStatusWithNotBookerIdTest() {
         bookingDto1.setItemId(item1.getId());
 
         BookingDto createdBooking = bookingService.addBooking(booker.getId(), bookingDto1);
@@ -169,7 +165,7 @@ class BookingServiceIntegrationTest {
     }
 
     @Test
-    void changeBookingStatusWhenItHasAlreadyBeenChangedTest() { // Можно в Юнит
+    void changeBookingStatusWhenItHasAlreadyBeenChangedTest() {
         bookingDto1.setItemId(item1.getId());
 
         BookingDto createdBooking = bookingService.addBooking(booker.getId(), bookingDto1);
