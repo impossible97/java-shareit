@@ -9,7 +9,6 @@ import org.springframework.boot.test.json.JsonContent;
 import ru.practicum.gateway.request.dto.RequestDto;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
