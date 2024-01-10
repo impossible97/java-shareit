@@ -1,0 +1,55 @@
+version: '3'
+
+networks:
+  shareit-network:
+
+services:
+  server:
+    container_name: server
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    ports:
+      - 8081:8081
+    depends_on:
+      - db
+    environment:
+      SERVER_PORT: 8081
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/shareit
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: postgres
+      SPRING_DATASOURCE_DRIVER_CLASS_NAME: org.postgresql.Driver
+      SPRING_JPA_DATABASE: postgresql
+      SPRING_CONFIG_ACTIVATE_ON_PROFILE: ci,test
+      SPRING_DATASOURCE_DRIVERCLASSNAME: org.postgresql.Driver
+      SPRING_DATASOURCE_URL_TEST: jdbc:h2:mem:shareit
+      SPRING_DATASOURCE_USERNAME_TEST: test
+      SPRING_DATASOURCE_PASSWORD_TEST: test
+    networks:
+      - shareit-network
+
+  gateway:
+    container_name: gateway
+    build:
+      context: ./gateway
+      dockerfile: Dockerfile
+    ports:
+      - 8080:8080
+    environment:
+      SERVER_PORT: 8080
+      SHARE_SERVER_URL: http://server:8081
+    depends_on:
+      - server
+    networks:
+      - shareit-network
+
+  db:
+    image: postgres
+    ports:
+      - 5432:5432
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: shareit
+    networks:
+      - shareit-network
