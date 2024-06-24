@@ -19,6 +19,7 @@ import ru.practicum.server.user.model.User;
 import ru.practicum.server.user.repository.UserRepository;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -101,6 +102,7 @@ public class BookingServiceImpl implements BookingService {
 
         PageRequest descPageRequest = PageRequest.of(from / size, size, Sort.by("start").descending());
         PageRequest ascPageRequest = PageRequest.of(from / size, size, Sort.by("start").ascending());
+        List<Integer> list = new ArrayList<>();
 
         switch (state) {
             case ALL:

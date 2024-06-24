@@ -61,4 +61,10 @@ public class UserServiceImpl implements UserService {
     public void deleteUser(long userId) {
         userRepository.deleteById(userId);
     }
+
+    // Тест
+    public void test() {
+        List<User> all = userRepository.findAll();
+
+    }
 }
