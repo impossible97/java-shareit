@@ -10,6 +10,7 @@ import ru.practicum.server.user.model.User;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 @Entity
 @Table(name = "bookings", schema = "public")
@@ -36,4 +37,17 @@ public class Booking {
     @Column(name = "status")
     @Enumerated(EnumType.STRING)
     BookingStatus status;
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Booking booking = (Booking) o;
+        return id == booking.id && Objects.equals(item, booking.item) && Objects.equals(booker, booking.booker) && Objects.equals(start, booking.start) && Objects.equals(end, booking.end) && status == booking.status;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, item, booker, start, end, status);
+    }
 }
